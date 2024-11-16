@@ -9,7 +9,7 @@
   <ItemGroup>
     <Folder Include="Interfaces\" />
     <Folder Include="Mapping\" />
-    <Folder Include="ViewModels\" />
+    <Folder Include="Dto\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
