@@ -44,7 +44,7 @@ namespace EventStock.Application.Services
             var tokenDescription = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(_configuration.GetValue<int>("Jwt:ExpirationTime")),
+                Expires = DateTime.Now.AddMinutes(int.Parse(_configuration["Jwt:ExpirationTime"])),
                 Issuer = _configuration["Jwt:Issuer"],
                 Audience = _configuration["Jwt:Audience"],
                 SigningCredentials = credentials,
