@@ -20,16 +20,11 @@ namespace EventStock.Application.Services
             _configuration = configuration;
         }
 
-        public Task Login(LoginUserDto user)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<SignInResult> AuthenticateUser(LoginUserDto user)
         {
             return await _signInManager.PasswordSignInAsync(user.Email, user.Password, true, false);
         }
-        
+
         public string GenerateJWT(LoginUserDto user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
