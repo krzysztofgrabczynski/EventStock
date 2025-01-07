@@ -10,7 +10,7 @@ namespace EventStock.Application.Interfaces
         Task<IdentityResult> CreateUserAsync(CreateUserDto userDto);
         Task<UserDto> GetUserAsync(string id);
         Task<UserDto> UpdateUserAsync(UserDto user);
-        Task DeleteUserAsync(int id);
+        Task<bool> DeleteUserAsync(string id);
         Task<List<StockDto>> ListUsersStocksAsync(int id);
     }
 }
