@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AutoMapper;
+using EventStock.Application.Mapping;
+using System.ComponentModel.DataAnnotations;
 
 namespace EventStock.Application.Dto.User
 {
-    public class CreateUserDto
+    public class CreateUserDto : IMapFrom<EventStock.Domain.Models.User>
     {
-        public int Id { get; set; }
         [Required]
         [EmailAddress]
         public string Email { get; set; }
@@ -17,5 +18,11 @@ namespace EventStock.Application.Dto.User
         [Required]
         [Compare("Password", ErrorMessage = "Passwords must be the same!")]
         public string ConfirmPassword { get; set; }
+
+        public void Mapping(Profile profile)
+        {
+            profile.CreateMap<CreateUserDto, EventStock.Domain.Models.User>()
+                .ForMember(u => u.UserName, opt => opt.MapFrom(src => src.Email));
+        }
     }
 }
