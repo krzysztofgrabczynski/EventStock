@@ -1,7 +1,10 @@
 using EventStock.Application.Interfaces;
+using EventStock.Application.Mapping;
 using EventStock.Application.Services;
+using EventStock.Domain.Interfaces;
 using EventStock.Domain.Models;
 using EventStock.Infrastructure;
+using EventStock.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -35,7 +38,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 // DI
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddTransient<IUserAuthenticationService, UserAuthenticationService>();
+builder.Services.AddTransient<IUserRepository, UserRepository>();
+builder.Services.AddTransient<IUserService, UserService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
