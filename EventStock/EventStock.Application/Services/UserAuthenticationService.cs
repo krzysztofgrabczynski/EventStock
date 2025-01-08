@@ -1,6 +1,7 @@
 ﻿using EventStock.Application.Dto.User;
 using EventStock.Application.Interfaces;
 using EventStock.Domain.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -12,20 +13,13 @@ namespace EventStock.Application.Services
 {
     public sealed class UserAuthenticationService : IUserAuthenticationService
     {
-        private readonly SignInManager<User> _signInManager;
         private readonly IConfiguration _configuration;
-        public UserAuthenticationService(SignInManager<User> signInManager, IConfiguration configuration)
+        public UserAuthenticationService(IConfiguration configuration)
         {
-            _signInManager = signInManager;
             _configuration = configuration;
         }
 
-        public async Task<SignInResult> AuthenticateUser(LoginUserDto user)
-        {
-            return await _signInManager.PasswordSignInAsync(user.Email, user.Password, true, false);
-        }
-
-        public string GenerateJWT(LoginUserDto user)
+        public string GenerateJWT(string id, string email)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -33,8 +27,8 @@ namespace EventStock.Application.Services
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, id),
+                new Claim(JwtRegisteredClaimNames.Email, email),
             };
             var tokenDescription = new SecurityTokenDescriptor
             {
@@ -48,6 +42,19 @@ namespace EventStock.Application.Services
 
             var token = tokenHandler.CreateToken(tokenDescription);
             return tokenHandler.WriteToken(token);
+        }
+
+        public string? GetIdFromToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(token);
+            return jwtToken.Subject;
+        }
+
+        public string GetTokenFromHeader(IHeaderDictionary headers)
+        {
+            var token = headers["Authorization"].ToString();
+            return token.Substring("Bearer ".Length);
         }
     }
 }
