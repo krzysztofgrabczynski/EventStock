@@ -2,11 +2,8 @@
 using EventStock.Application.Dto.Stock;
 using EventStock.Application.Dto.User;
 using EventStock.Application.Interfaces;
-using EventStock.Domain.Interfaces;
 using EventStock.Domain.Models;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using System.Security.AccessControl;
 
 namespace EventStock.Application.Services
 {
@@ -32,8 +29,31 @@ namespace EventStock.Application.Services
             var mappedUser = _mapper.Map<UserDto>(user);
             return mappedUser;
         }
+        public async Task<string> GetUserIdByEmailAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            return user.Id;
+        }
 
-        public Task<UserDto> UpdateUserAsync(UserDto user)
+        public async Task<IdentityResult> UpdateUserAsync(string id, UserDto updatedUser)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return IdentityResult.Failed(new IdentityError
+                {
+                    Code = "UserNotFound",
+                    Description = "User with provided ID was not found"
+                });
+            }
+            user.Email = updatedUser.Email ?? user.Email;
+            user.FirstName = updatedUser.FirstName ?? user.FirstName;
+            user.LastName = updatedUser.LastName ?? user.LastName;
+
+            return await _userManager.UpdateAsync(user);
+        }
+
+        public Task<IdentityResult> UpdateUserPasswordAsync(string id, ChangeUserPasswordDto changePasswordDto)
         {
             throw new NotImplementedException();
         }
@@ -53,6 +73,6 @@ namespace EventStock.Application.Services
         public Task<List<StockDto>> ListUsersStocksAsync(int id)
         {
             throw new NotImplementedException();
-        }
+        }    
     }
 }
