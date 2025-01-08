@@ -1,8 +1,5 @@
-﻿using EventStock.Application.Dto.User;
-using EventStock.Application.Interfaces;
-using EventStock.Domain.Models;
+﻿using EventStock.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,10 +8,10 @@ using System.Text;
 
 namespace EventStock.Application.Services
 {
-    public sealed class UserAuthenticationService : IUserAuthenticationService
+    public sealed class TokenManagementService : ITokenManagementService
     {
         private readonly IConfiguration _configuration;
-        public UserAuthenticationService(IConfiguration configuration)
+        public TokenManagementService(IConfiguration configuration)
         {
             _configuration = configuration;
         }

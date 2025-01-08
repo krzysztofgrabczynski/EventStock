@@ -1,10 +1,8 @@
-﻿using EventStock.Application.Dto.User;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace EventStock.Application.Interfaces
 {
-    public interface IUserAuthenticationService
+    public interface ITokenManagementService
     {
         string? GetIdFromToken(string token);
         string GetTokenFromHeader(IHeaderDictionary headers);
