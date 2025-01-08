@@ -3,25 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStock.API", "EventStock.API\EventStock.API.csproj", "{84D57923-14CC-4DEF-9815-40DA27ACEA45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStock.API", "EventStock.API\EventStock.API.csproj", "{84D57923-14CC-4DEF-9815-40DA27ACEA45}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UI", "UI", "{9ECB9E18-1C1F-47C1-A053-639D65D3C211}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{C7D8375D-BA4E-4E30-B369-2BBCB6025552}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStock.Domain", "EventStock.Domain\EventStock.Domain.csproj", "{E9F434BD-D2B3-4619-B989-8C3636B0350D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStock.Domain", "EventStock.Domain\EventStock.Domain.csproj", "{E9F434BD-D2B3-4619-B989-8C3636B0350D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{4CE65BB5-6CED-4080-A951-5AE1B062452F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStock.Application", "EventStock.Application\EventStock.Application.csproj", "{36F44065-C836-4BB4-A54E-CFA5AD4C8A7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStock.Application", "EventStock.Application\EventStock.Application.csproj", "{36F44065-C836-4BB4-A54E-CFA5AD4C8A7E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{7C43EE4D-9AA6-4868-B172-78E4148D5C43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStock.Infrastructure", "EventStock.Infrastructure\EventStock.Infrastructure.csproj", "{4579F19D-F03C-4087-93AE-02DCD3AEFE1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStock.Infrastructure", "EventStock.Infrastructure\EventStock.Infrastructure.csproj", "{4579F19D-F03C-4087-93AE-02DCD3AEFE1E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{AE5E21DA-713A-4D7A-A2D3-F7A9CD48DC69}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventStock.Tests", "EventStock.Tests\EventStock.Tests.csproj", "{84E53D61-B5BA-4F91-BA94-2A798E336FF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStock.Tests", "EventStock.Tests\EventStock.Tests.csproj", "{84E53D61-B5BA-4F91-BA94-2A798E336FF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
