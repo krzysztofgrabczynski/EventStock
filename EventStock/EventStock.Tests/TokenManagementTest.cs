@@ -8,12 +8,12 @@ namespace EventStock.Tests
     public class TokenManagementTest
     {
         private readonly Mock<IConfiguration> _configurationMock;
-        private readonly TokenManagementService _tokenManagementService;
+        private readonly JwtTokenService _jwtTokenService;
 
         public TokenManagementTest()
         {
             _configurationMock = new Mock<IConfiguration>();
-            _tokenManagementService = new TokenManagementService(_configurationMock.Object);
+            _jwtTokenService = new JwtTokenService(_configurationMock.Object);
         }
 
         [Fact]
@@ -28,7 +28,7 @@ namespace EventStock.Tests
             _configurationMock.Setup(c => c["Jwt:ExpirationTime"]).Returns("60");
 
             // Act
-            var token = _tokenManagementService.GenerateJWT(id, email);
+            var token = _jwtTokenService.GenerateJWT(id, email);
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(token);
 

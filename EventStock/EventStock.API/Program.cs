@@ -39,7 +39,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // DI
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-builder.Services.AddTransient<ITokenManagementService, TokenManagementService>();
+builder.Services.AddTransient<IJwtTokentService, JwtTokenService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
 

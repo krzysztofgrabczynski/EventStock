@@ -11,12 +11,12 @@ namespace EventStock.API.Controllers
     public class LoginController : ControllerBase
     {
         private readonly SignInManager<User> _signInManager;
-        private readonly ITokenManagementService _tokenManagementService;
+        private readonly IJwtTokentService _jwtTokenService;
         private readonly IUserService _userService;
-        public LoginController(SignInManager<User> signInManager, ITokenManagementService tokenManagementService, IUserService userService)
+        public LoginController(SignInManager<User> signInManager, IJwtTokentService jwtTokenService, IUserService userService)
         {
             _signInManager = signInManager;
-            _tokenManagementService = tokenManagementService;
+            _jwtTokenService = jwtTokenService;
             _userService = userService;
         }
 
@@ -27,7 +27,7 @@ namespace EventStock.API.Controllers
             if(checkUserResult.Result.Succeeded)
             {
                 var userId = await _userService.GetUserIdByEmailAsync(loginUserDto.Email);
-                var jwtToken = _tokenManagementService.GenerateJWT(userId, loginUserDto.Email);
+                var jwtToken = _jwtTokenService.GenerateJWT(userId, loginUserDto.Email);
                 return Ok(new { token = jwtToken });
             }
 

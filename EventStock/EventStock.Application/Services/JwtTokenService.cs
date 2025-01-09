@@ -8,10 +8,10 @@ using System.Text;
 
 namespace EventStock.Application.Services
 {
-    public sealed class TokenManagementService : ITokenManagementService
+    public sealed class JwtTokenService : IJwtTokentService
     {
         private readonly IConfiguration _configuration;
-        public TokenManagementService(IConfiguration configuration)
+        public JwtTokenService(IConfiguration configuration)
         {
             _configuration = configuration;
         }

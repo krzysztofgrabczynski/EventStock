@@ -2,7 +2,7 @@
 
 namespace EventStock.Application.Interfaces
 {
-    public interface ITokenManagementService
+    public interface IJwtTokentService
     {
         string? GetIdFromToken(string token);
         string GetTokenFromHeader(IHeaderDictionary headers);
