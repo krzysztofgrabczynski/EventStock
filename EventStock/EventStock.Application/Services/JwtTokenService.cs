@@ -16,7 +16,7 @@ namespace EventStock.Application.Services
             _configuration = configuration;
         }
 
-        public string GenerateJWT(string id, string email)
+        public string GenerateJWT(string userId)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -24,8 +24,7 @@ namespace EventStock.Application.Services
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, id),
-                new Claim(JwtRegisteredClaimNames.Email, email),
+                new Claim(JwtRegisteredClaimNames.Sub, userId)
             };
             var tokenDescription = new SecurityTokenDescriptor
             {
@@ -41,17 +40,19 @@ namespace EventStock.Application.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public string? GetIdFromToken(string token)
+        public string GetIdFromJwtToken(IHeaderDictionary headers)
         {
+            var tokenFromHeader = headers["Authorization"].ToString();
+            var token = tokenFromHeader.Substring("Bearer ".Length);
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(token);
-            return jwtToken.Subject;
-        }
-
-        public string GetTokenFromHeader(IHeaderDictionary headers)
-        {
-            var token = headers["Authorization"].ToString();
-            return token.Substring("Bearer ".Length);
-        }
+            var result = jwtToken.Subject;
+            if (result == null)
+            {
+                throw new SecurityTokenValidationException("Invalid token");
+            }
+            return result;
+        }   
     }
 }

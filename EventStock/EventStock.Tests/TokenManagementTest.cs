@@ -21,14 +21,13 @@ namespace EventStock.Tests
         {
             // Arrange
             string id = Guid.NewGuid().ToString();
-            string email = "test@example.com";
             _configurationMock.Setup(c => c["Jwt:Key"]).Returns("supersecretkeyforsigningsupersecretkeyforsigning");
             _configurationMock.Setup(c => c["Jwt:Issuer"]).Returns("TestIssuer");
             _configurationMock.Setup(c => c["Jwt:Audience"]).Returns("TestAudience");
             _configurationMock.Setup(c => c["Jwt:ExpirationTime"]).Returns("60");
 
             // Act
-            var token = _jwtTokenService.GenerateJWT(id, email);
+            var token = _jwtTokenService.GenerateJWT(id);
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtToken = tokenHandler.ReadJwtToken(token);
 
