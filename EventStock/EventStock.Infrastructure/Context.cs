@@ -12,6 +12,7 @@ namespace EventStock.Infrastructure
         public DbSet<Equipment> Equipments { get; set; }
         public DbSet<EventEquipment> EventEquipments { get; set; }
         public DbSet<Address> Addresses { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public Context(DbContextOptions<Context> options) : base(options)
         { 
