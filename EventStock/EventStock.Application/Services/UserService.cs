@@ -32,6 +32,10 @@ namespace EventStock.Application.Services
         public async Task<string> GetUserIdByEmailAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                throw new ArgumentException($"User with email: {email} not found");
+            }
             return user.Id;
         }
 
