@@ -2,7 +2,6 @@
 using EventStock.Domain.Interfaces;
 using EventStock.Domain.Models;
 using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -42,12 +41,12 @@ namespace EventStock.Application.Services
             return Convert.ToBase64String(sha256.ComputeHash(bytes));
         }
 
-        public async Task<RefreshToken> GetRefreshTokenAsync(string userId)
+        public async Task<RefreshToken?> GetRefreshTokenAsync(string userId)
         {
             var token = await _refreshTokenRepository.GetRefreshTokenAsync(userId);
             if (token == null)
             {
-                throw new SecurityTokenValidationException("Invalid token");
+                return null;
             }
             return token;
         }

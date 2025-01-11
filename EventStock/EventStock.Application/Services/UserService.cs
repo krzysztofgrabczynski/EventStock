@@ -29,12 +29,12 @@ namespace EventStock.Application.Services
             var mappedUser = _mapper.Map<UserDto>(user);
             return mappedUser;
         }
-        public async Task<string> GetUserIdByEmailAsync(string email)
+        public async Task<string?> GetUserIdByEmailAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                throw new ArgumentException($"User with email: {email} not found");
+                return null;
             }
             return user.Id;
         }

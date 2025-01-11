@@ -40,7 +40,7 @@ namespace EventStock.Application.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public string GetIdFromJwtToken(IHeaderDictionary headers)
+        public string? GetIdFromJwtToken(IHeaderDictionary headers)
         {
             var tokenFromHeader = headers["Authorization"].ToString();
             var token = tokenFromHeader.Substring("Bearer ".Length);
@@ -50,7 +50,7 @@ namespace EventStock.Application.Services
             var result = jwtToken.Subject;
             if (result == null)
             {
-                throw new SecurityTokenValidationException("Invalid token");
+                return null;
             }
             return result;
         }   

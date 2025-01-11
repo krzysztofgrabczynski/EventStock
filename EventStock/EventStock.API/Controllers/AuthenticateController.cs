@@ -2,12 +2,14 @@
 using EventStock.Application.Dto.User;
 using EventStock.Application.Interfaces;
 using EventStock.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EventStock.API.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
@@ -24,12 +26,17 @@ namespace EventStock.API.Controllers
         }
 
         [HttpPost("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
         {
             var checkUserAutchentication = AuthenticateUser(loginUserDto);
             if(checkUserAutchentication.Result.Succeeded)
             {
                 var userId = await _userService.GetUserIdByEmailAsync(loginUserDto.Email);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return NotFound(new { message = "User with provided email not found" });
+                }
                 var jwtToken = _jwtTokenService.GenerateJWT(userId);
                 var refreshToken = await _refreshTokenService.GenerateRefreshTokenAsync(userId);
                 return Ok(new 
@@ -39,13 +46,17 @@ namespace EventStock.API.Controllers
                 });
             }
 
-            return BadRequest("Invalid login credentials");
+            return BadRequest(new { message = "Invalid login credentials" });
         }
 
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
             var userId = _jwtTokenService.GetIdFromJwtToken(HttpContext.Request.Headers);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "Invalid refresh token" });
+            }
             await _refreshTokenService.DeleteRefreshTokenAsync(userId);
 
             return Ok();
@@ -55,9 +66,13 @@ namespace EventStock.API.Controllers
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenDto)
         {
             var userId = _jwtTokenService.GetIdFromJwtToken(HttpContext.Request.Headers);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "Invalid refresh token" });
+            }
 
             var refreshTokenFromDB = await _refreshTokenService.GetRefreshTokenAsync(userId);
-            if (!_refreshTokenService.CheckRefreshToken(refreshTokenFromDB, refreshTokenDto.RefreshToken))
+            if (refreshTokenFromDB == null || !_refreshTokenService.CheckRefreshToken(refreshTokenFromDB, refreshTokenDto.RefreshToken))
             {
                 return Unauthorized(new { message = "Invalid refresh token" });
             }
@@ -68,8 +83,8 @@ namespace EventStock.API.Controllers
 
             return Ok(new
             {
-                token = newJwtToken,
-                refreshToken = newRefreshToken
+                Token = newJwtToken,
+                RefreshToken = newRefreshToken
             });
         }
 

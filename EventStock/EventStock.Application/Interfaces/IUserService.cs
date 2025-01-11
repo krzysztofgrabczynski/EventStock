@@ -9,7 +9,7 @@ namespace EventStock.Application.Interfaces
     {
         Task<IdentityResult> CreateUserAsync(CreateUserDto userDto);
         Task<UserDto> GetUserAsync(string id);
-        Task<string> GetUserIdByEmailAsync(string email);
+        Task<string?> GetUserIdByEmailAsync(string email);
         Task<IdentityResult> UpdateUserAsync(string id, UserDto updatedUser);
         Task<IdentityResult> UpdateUserPasswordAsync(string id, ChangeUserPasswordDto changePasswordDto);
         Task<bool> DeleteUserAsync(string id);
