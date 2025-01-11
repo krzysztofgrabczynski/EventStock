@@ -41,9 +41,10 @@ namespace EventStock.Application.Services
             return Convert.ToBase64String(sha256.ComputeHash(bytes));
         }
 
-        public async Task<RefreshToken?> GetRefreshTokenAsync(string userId)
+        public async Task<RefreshToken?> GetRefreshTokenAsync(string refreshTokenDto, bool needHash)
         {
-            var token = await _refreshTokenRepository.GetRefreshTokenAsync(userId);
+            var refreshToken = needHash ? HashToken(refreshTokenDto) : refreshTokenDto;
+            var token = await _refreshTokenRepository.GetRefreshTokenAsync(refreshToken);
             if (token == null)
             {
                 return null;
@@ -51,22 +52,34 @@ namespace EventStock.Application.Services
             return token;
         }
 
-        public async Task DeleteRefreshTokenAsync(string userId)
+        public async Task DeleteRefreshTokenAsync(string refreshTokenDto, bool needHash)
         {
-            await _refreshTokenRepository.DeleteRefreshTokenAsync(userId);
+            var refreshToken = needHash ? HashToken(refreshTokenDto) : refreshTokenDto;
+            await _refreshTokenRepository.DeleteRefreshTokenAsync(refreshToken);
         }
 
         public bool CheckRefreshToken(RefreshToken tokenFromDB, string tokenFromRequest)
         {
-            var hashedTokenFromRequest = HashToken(tokenFromRequest);
-            var hashedTokenFromDB = tokenFromDB.Token;
-
-            if (hashedTokenFromDB != hashedTokenFromRequest || tokenFromDB.Expiration < DateTime.UtcNow)
+            if (tokenFromDB.Expiration < DateTime.UtcNow)
             {
                 return false;
             }
 
             return true;
+        }
+
+        public async Task RevokeRefreshTokensAsync(string userId)
+        {
+            await _refreshTokenRepository.RevokeRefreshTokensAsync(userId);
+        }
+
+        public async Task<string> UpdateRefreshTokenAsync(RefreshToken refreshToken)
+        {
+            var newToken = Guid.NewGuid().ToString();
+            refreshToken.Token = HashToken(newToken);
+            refreshToken.Expiration = DateTime.UtcNow.AddDays(int.Parse(_configuration["RefreshToken:ExpirationTimeInDays"]));
+            await _refreshTokenRepository.UpdateRefreshTokenAsync(refreshToken);
+            return newToken;
         }
     }
 }

@@ -49,15 +49,15 @@ namespace EventStock.API.Controllers
             return BadRequest(new { message = "Invalid login credentials" });
         }
 
-        [HttpPost("logout")]
-        public async Task<IActionResult> Logout()
+        private async Task<Microsoft.AspNetCore.Identity.SignInResult> AuthenticateUser(LoginUserDto user)
         {
-            var userId = _jwtTokenService.GetIdFromJwtToken(HttpContext.Request.Headers);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "Invalid refresh token" });
-            }
-            await _refreshTokenService.DeleteRefreshTokenAsync(userId);
+            return await _signInManager.PasswordSignInAsync(user.Email, user.Password, true, false);
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] RefreshTokenRequestDto refreshTokenDto)
+        {
+            await _refreshTokenService.DeleteRefreshTokenAsync(refreshTokenDto.RefreshToken, needHash: true);
 
             return Ok();
         }
@@ -71,15 +71,14 @@ namespace EventStock.API.Controllers
                 return Unauthorized(new { message = "Invalid refresh token" });
             }
 
-            var refreshTokenFromDB = await _refreshTokenService.GetRefreshTokenAsync(userId);
+            var refreshTokenFromDB = await _refreshTokenService.GetRefreshTokenAsync(refreshTokenDto.RefreshToken, needHash: true);
             if (refreshTokenFromDB == null || !_refreshTokenService.CheckRefreshToken(refreshTokenFromDB, refreshTokenDto.RefreshToken))
             {
                 return Unauthorized(new { message = "Invalid refresh token" });
             }
 
-            await _refreshTokenService.DeleteRefreshTokenAsync(userId);
+            var newRefreshToken = await _refreshTokenService.UpdateRefreshTokenAsync(refreshTokenFromDB);
             var newJwtToken = _jwtTokenService.GenerateJWT(userId);
-            var newRefreshToken = await _refreshTokenService.GenerateRefreshTokenAsync(userId);
 
             return Ok(new
             {
@@ -88,9 +87,18 @@ namespace EventStock.API.Controllers
             });
         }
 
-        private async Task<Microsoft.AspNetCore.Identity.SignInResult> AuthenticateUser(LoginUserDto user)
+        [HttpDelete("revoke-tokens")]
+        public async Task<IActionResult> RevokeRefreshTokens()
         {
-            return await _signInManager.PasswordSignInAsync(user.Email, user.Password, true, false);
+            var userId = _jwtTokenService.GetIdFromJwtToken(HttpContext.Request.Headers);
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "Invalid access token" });
+            }
+
+            await _refreshTokenService.RevokeRefreshTokensAsync(userId);
+
+            return Ok();
         }
     }
 }
