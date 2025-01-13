@@ -5,6 +5,7 @@ using EventStock.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
 
 namespace EventStock.API.Controllers
 {
@@ -99,6 +100,22 @@ namespace EventStock.API.Controllers
             await _refreshTokenService.RevokeRefreshTokensAsync(userId);
 
             return Ok();
+        }
+
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody] CreateUserDto user)
+        {
+            var result = await _userService.CreateUserAsync(user);
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+            else
+            {
+                var errors = result.Errors.Select(e => e.Description);
+                return BadRequest(errors);
+            }
         }
     }
 }
