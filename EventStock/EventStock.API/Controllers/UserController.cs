@@ -2,6 +2,7 @@
 using EventStock.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace EventStock.API.Controllers
 {
@@ -12,6 +13,18 @@ namespace EventStock.API.Controllers
     {
         private readonly IJwtTokentService _jwtTokentService;
         private readonly IUserService _userService;
+        private string UserId 
+        {
+            get
+            {
+                string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new UnauthorizedAccessException("Invalid access token");
+                }
+                return userId;
+            } 
+        }
 
         public UserController(IJwtTokentService jwtTokentService, IUserService userService)
         {
@@ -22,13 +35,7 @@ namespace EventStock.API.Controllers
         [HttpGet("my-profile")]
         public async Task<IActionResult> GetMyProfile()
         {
-            var userId = _jwtTokentService.GetIdFromJwtToken(HttpContext.Request.Headers);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "Invalid access token" });
-            }
-
-            var user = await _userService.GetUserAsync(userId);
+            var user = await _userService.GetUserAsync(UserId);
             if (user == null)
             {
                 return NotFound(new { message = "User not found" });
@@ -40,13 +47,7 @@ namespace EventStock.API.Controllers
         [HttpPut("update-profile")]
         public async Task<IActionResult> UpdateMyProfile([FromBody] UserDto user)
         {
-            var userId = _jwtTokentService.GetIdFromJwtToken(HttpContext.Request.Headers);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "Invalid access token" });
-            }
-
-            var result = await _userService.UpdateUserAsync(userId, user);
+            var result = await _userService.UpdateUserAsync(UserId, user);
             if (result.Succeeded)
             {
                 return Ok();
@@ -61,13 +62,7 @@ namespace EventStock.API.Controllers
         [HttpDelete("delete-profile")]
         public async Task<IActionResult> DeleteMyProfile()
         {
-            var userId = _jwtTokentService.GetIdFromJwtToken(HttpContext.Request.Headers);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "Invalid access token" });
-            }
-
-            var result = await _userService.DeleteUserAsync(userId);
+            var result = await _userService.DeleteUserAsync(UserId);
             if (result)
             {
                 return Ok();
@@ -81,13 +76,7 @@ namespace EventStock.API.Controllers
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangeUserPassword([FromBody] ChangeUserPasswordDto changeUserPasswordDto)
         {
-            var userId = _jwtTokentService.GetIdFromJwtToken(HttpContext.Request.Headers);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "Invalid access token" });
-            }
-
-            var result = await _userService.UpdateUserPasswordAsync(userId, changeUserPasswordDto);
+            var result = await _userService.UpdateUserPasswordAsync(UserId, changeUserPasswordDto);
             if (result.Succeeded)
             {
                 return Ok();

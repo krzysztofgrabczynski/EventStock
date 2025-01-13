@@ -5,7 +5,7 @@ using EventStock.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel;
+using System.Security.Claims;
 
 namespace EventStock.API.Controllers
 {
@@ -18,6 +18,27 @@ namespace EventStock.API.Controllers
         private readonly IJwtTokentService _jwtTokenService;
         private readonly IRefreshTokenService _refreshTokenService;
         private readonly IUserService _userService;
+
+        private string UserId
+        {
+            get
+            {
+                var endpoint = HttpContext.GetEndpoint();
+                if (endpoint?.Metadata?.GetMetadata<AllowAnonymousAttribute>() != null)
+                {
+                    return "";
+                }
+
+                string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    throw new UnauthorizedAccessException("Invalid access token");
+                }
+                return userId;
+            }
+        }
+
+
         public AuthenticateController(SignInManager<User> signInManager, IJwtTokentService jwtTokenService, IRefreshTokenService refreshTokenService, IUserService userService)
         {
             _signInManager = signInManager;
@@ -66,12 +87,6 @@ namespace EventStock.API.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenDto)
         {
-            var userId = _jwtTokenService.GetIdFromJwtToken(HttpContext.Request.Headers);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "Invalid refresh token" });
-            }
-
             var refreshTokenFromDB = await _refreshTokenService.GetRefreshTokenAsync(refreshTokenDto.RefreshToken, needHash: true);
             if (refreshTokenFromDB == null || !_refreshTokenService.CheckRefreshToken(refreshTokenFromDB))
             {
@@ -79,7 +94,7 @@ namespace EventStock.API.Controllers
             }
 
             var newRefreshToken = await _refreshTokenService.UpdateRefreshTokenAsync(refreshTokenFromDB);
-            var newJwtToken = _jwtTokenService.GenerateJWT(userId);
+            var newJwtToken = _jwtTokenService.GenerateJWT(UserId);
 
             return Ok(new
             {
@@ -91,13 +106,7 @@ namespace EventStock.API.Controllers
         [HttpDelete("revoke-tokens")]
         public async Task<IActionResult> RevokeRefreshTokens()
         {
-            var userId = _jwtTokenService.GetIdFromJwtToken(HttpContext.Request.Headers);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized(new { message = "Invalid access token" });
-            }
-
-            await _refreshTokenService.RevokeRefreshTokensAsync(userId);
+            await _refreshTokenService.RevokeRefreshTokensAsync(UserId);
 
             return Ok();
         }
