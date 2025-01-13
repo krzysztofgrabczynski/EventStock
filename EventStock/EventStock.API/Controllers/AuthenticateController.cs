@@ -72,7 +72,7 @@ namespace EventStock.API.Controllers
             }
 
             var refreshTokenFromDB = await _refreshTokenService.GetRefreshTokenAsync(refreshTokenDto.RefreshToken, needHash: true);
-            if (refreshTokenFromDB == null || !_refreshTokenService.CheckRefreshToken(refreshTokenFromDB, refreshTokenDto.RefreshToken))
+            if (refreshTokenFromDB == null || !_refreshTokenService.CheckRefreshToken(refreshTokenFromDB))
             {
                 return Unauthorized(new { message = "Invalid refresh token" });
             }

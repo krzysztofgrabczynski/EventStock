@@ -58,7 +58,7 @@ namespace EventStock.Application.Services
             await _refreshTokenRepository.DeleteRefreshTokenAsync(refreshToken);
         }
 
-        public bool CheckRefreshToken(RefreshToken tokenFromDB, string tokenFromRequest)
+        public bool CheckRefreshToken(RefreshToken tokenFromDB)
         {
             if (tokenFromDB.Expiration < DateTime.UtcNow)
             {

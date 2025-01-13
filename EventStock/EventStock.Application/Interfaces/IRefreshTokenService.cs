@@ -6,7 +6,7 @@ namespace EventStock.Application.Interfaces
     {
         Task<string> GenerateRefreshTokenAsync(string userId);
         Task<RefreshToken?> GetRefreshTokenAsync(string refreshToken, bool needHash);
-        bool CheckRefreshToken(RefreshToken tokneFromDB, string tokenFromRequest);
+        bool CheckRefreshToken(RefreshToken tokneFromDB);
         Task DeleteRefreshTokenAsync(string refreshToken, bool needHash);
         Task RevokeRefreshTokensAsync(string userId);
         Task <string> UpdateRefreshTokenAsync(RefreshToken refreshToken);
