@@ -57,9 +57,19 @@ namespace EventStock.Application.Services
             return await _userManager.UpdateAsync(user);
         }
 
-        public Task<IdentityResult> UpdateUserPasswordAsync(string id, ChangeUserPasswordDto changePasswordDto)
+        public async Task<IdentityResult> UpdateUserPasswordAsync(string id, ChangeUserPasswordDto changePasswordDto)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return IdentityResult.Failed(new IdentityError()
+                {
+                    Code = "UserNotFound",
+                    Description = "User with provided ID was not found"
+                });
+            }
+
+            return await _userManager.ChangePasswordAsync(user, changePasswordDto.OldPassword, changePasswordDto.Password);
         }
 
         public async Task<bool> DeleteUserAsync(string id)
