@@ -1,7 +1,9 @@
 ﻿using EventStock.Application.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection.Metadata;
 
 namespace EventStock.Tests
 {
@@ -37,5 +39,22 @@ namespace EventStock.Tests
             Assert.Equal("TestIssuer", jwtToken.Issuer);
             Assert.Contains("TestAudience", jwtToken.Audiences);
         }
+
+        [Fact]
+        public void GetIdFromJwtTokenTest()
+        {
+            // Arrange
+            var jwtToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIwYmM5YjBkMC1lMmFhLTQ4ZjYtOWFkYy04NTQwZTY4NDEzOGMiLCJzdWIiOiJ1c2VyLWlkIiwibmJmIjoxNzM2NzcxOTMwLCJleHAiOjE3MzY3NzU1MzAsImlhdCI6MTczNjc3MTkzMCwiaXNzIjoidGVzdC1pc3N1ZXIiLCJhdWQiOiJ0ZXN0LWF1ZGllbmNlIn0.CcsE5L31ukNgvp7pxlxaLG0UwQGrFyW1Y-Xh2Jn3qEk";
+            var sub = "user-id";
+            var mock = new Mock<IHeaderDictionary>();
+            mock.Setup(m => m["Authorization"]).Returns(jwtToken);
+
+            // Act
+            var idFromToken = _jwtTokenService.GetIdFromJwtToken(mock.Object);
+
+            // Assert
+            Assert.NotNull(idFromToken);
+            Assert.Equal(idFromToken, sub);
+        }     
     }
 }
