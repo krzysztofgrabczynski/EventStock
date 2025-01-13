@@ -29,8 +29,8 @@ namespace EventStock.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
         {
-            var checkUserAutchentication = AuthenticateUser(loginUserDto);
-            if(checkUserAutchentication.Result.Succeeded)
+            var checkUserAutchentication = await AuthenticateUser(loginUserDto);
+            if(checkUserAutchentication.Succeeded)
             {
                 var userId = await _userService.GetUserIdByEmailAsync(loginUserDto.Email);
                 if (string.IsNullOrEmpty(userId))
