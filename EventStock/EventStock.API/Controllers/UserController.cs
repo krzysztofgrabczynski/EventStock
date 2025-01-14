@@ -35,57 +35,51 @@ namespace EventStock.API.Controllers
         [HttpGet("my-profile")]
         public async Task<IActionResult> GetMyProfile()
         {
-            var user = await _userService.GetUserAsync(UserId);
-            if (user == null)
+            var result = await _userService.GetUserAsync(UserId);
+            if (!result.Succeeded)
             {
-                return NotFound(new { message = "User not found" });
+                return BadRequest(result.Error);
             }
-
-            return Ok(user);
+            return Ok(result.Value);
         }
 
         [HttpPut("update-profile")]
         public async Task<IActionResult> UpdateMyProfile([FromBody] UserDto user)
         {
             var result = await _userService.UpdateUserAsync(UserId, user);
-            if (result.Succeeded)
-            {
-                return Ok();
-            }
-            else
+            if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(e => e.Description);
                 return BadRequest(errors);
             }
+
+            return Ok();
         }
 
         [HttpDelete("delete-profile")]
         public async Task<IActionResult> DeleteMyProfile()
         {
             var result = await _userService.DeleteUserAsync(UserId);
-            if (result)
+            if (!result.Succeeded)
             {
-                return Ok();
+                var errors = result.Errors.Select(e => e.Description);
+                return BadRequest(errors);
             }
-            else
-            {
-                return BadRequest();
-            }
+
+            return Ok();
         }
 
         [HttpPost("change-password")]
         public async Task<IActionResult> ChangeUserPassword([FromBody] ChangeUserPasswordDto changeUserPasswordDto)
         {
             var result = await _userService.UpdateUserPasswordAsync(UserId, changeUserPasswordDto);
-            if (result.Succeeded)
-            {
-                return Ok();
-            }
-            else
+            if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(e => e.Description);
-                return BadRequest(errors);
+                return BadRequest(errors);   
             }
+
+            return Ok();
         }
     }
 }

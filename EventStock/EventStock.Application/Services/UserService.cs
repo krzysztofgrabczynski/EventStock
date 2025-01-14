@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using EventStock.Application.Dto.Stock;
 using EventStock.Application.Dto.User;
+using EventStock.Application.ResultPattern;
 using EventStock.Application.Interfaces;
 using EventStock.Domain.Models;
 using Microsoft.AspNetCore.Identity;
+using EventStock.Application.ResultPattern.Errors;
 
 namespace EventStock.Application.Services
 {
@@ -23,11 +25,15 @@ namespace EventStock.Application.Services
             return await _userManager.CreateAsync(mappedUser, userDto.Password);
         }
 
-        public async Task<UserDto> GetUserAsync(string id)
+        public async Task<Result<UserDto>> GetUserAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return Result<UserDto>.Failure(new UserNotFoundResultError());
+            }
             var mappedUser = _mapper.Map<UserDto>(user);
-            return mappedUser;
+            return Result<UserDto>.Success(mappedUser);
         }
         public async Task<string?> GetUserIdByEmailAsync(string email)
         {
@@ -44,11 +50,7 @@ namespace EventStock.Application.Services
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return IdentityResult.Failed(new IdentityError
-                {
-                    Code = "UserNotFound",
-                    Description = "User with provided ID was not found"
-                });
+                return IdentityResult.Failed(new UserNotFoundIdentityError());
             }
             user.Email = updatedUser.Email ?? user.Email;
             user.FirstName = updatedUser.FirstName ?? user.FirstName;
@@ -62,31 +64,35 @@ namespace EventStock.Application.Services
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return IdentityResult.Failed(new IdentityError()
-                {
-                    Code = "UserNotFound",
-                    Description = "User with provided ID was not found"
-                });
+                return IdentityResult.Failed(new UserNotFoundIdentityError());
             }
 
             return await _userManager.ChangePasswordAsync(user, changePasswordDto.OldPassword, changePasswordDto.Password);
         }
 
-        public async Task<bool> DeleteUserAsync(string id)
+        public async Task<IdentityResult> DeleteUserAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
-                return false;
+                return IdentityResult.Failed(new UserNotFoundIdentityError());
             }
 
-            var result = await _userManager.DeleteAsync(user);
-            return result.Succeeded;
+            return await _userManager.DeleteAsync(user);
         }
 
         public Task<List<StockDto>> ListUsersStocksAsync(int id)
         {
             throw new NotImplementedException();
         }    
+
+        private class UserNotFoundIdentityError : IdentityError
+        {
+            public UserNotFoundIdentityError()
+            {
+                Code = "UserNotFound"; 
+                Description = "User with provided ID was not found";
+            }
+        }
     }
 }
