@@ -35,6 +35,7 @@ namespace EventStock.Application.Services
             var mappedUser = _mapper.Map<UserDto>(user);
             return Result<UserDto>.Success(mappedUser);
         }
+
         public async Task<string?> GetUserIdByEmailAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
