@@ -11,7 +11,6 @@ namespace EventStock.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IJwtTokentService _jwtTokentService;
         private readonly IUserService _userService;
         private string UserId 
         {
@@ -26,9 +25,8 @@ namespace EventStock.API.Controllers
             } 
         }
 
-        public UserController(IJwtTokentService jwtTokentService, IUserService userService)
+        public UserController(IUserService userService)
         {
-            _jwtTokentService = jwtTokentService;
             _userService = userService;
         }
 

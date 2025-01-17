@@ -4,4 +4,9 @@
     {
         public UserNotFoundResultError() : base("UserNotFound", "User with provided ID not found") { }
     }
+
+    public record UserWithEmailNotFoundResultError : ResultError
+    {
+        public UserWithEmailNotFoundResultError() : base("UserWithEmailNotFound", "User with provided email not found") { }
+    }
 }

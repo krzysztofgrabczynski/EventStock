@@ -1,4 +1,4 @@
-﻿using EventStock.Application.Dto.RefreshToken;
+﻿using EventStock.Application.Dto.Token;
 using EventStock.Application.Dto.User;
 using EventStock.Application.Interfaces;
 using EventStock.Domain.Models;
@@ -15,9 +15,8 @@ namespace EventStock.API.Controllers
     public class AuthenticateController : ControllerBase
     {
         private readonly SignInManager<User> _signInManager;
-        private readonly IJwtTokentService _jwtTokenService;
-        private readonly IRefreshTokenService _refreshTokenService;
         private readonly IUserService _userService;
+        private readonly ITokenManagementService _tokenManagementService;
 
         private string UserId
         {
@@ -38,37 +37,32 @@ namespace EventStock.API.Controllers
             }
         }
 
-
-        public AuthenticateController(SignInManager<User> signInManager, IJwtTokentService jwtTokenService, IRefreshTokenService refreshTokenService, IUserService userService)
+        public AuthenticateController(SignInManager<User> signInManager, IUserService userService, ITokenManagementService tokenManagementService)
         {
             _signInManager = signInManager;
-            _jwtTokenService = jwtTokenService;
-            _refreshTokenService = refreshTokenService;
             _userService = userService;
+            _tokenManagementService = tokenManagementService;
         }
 
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
         {
-            var checkUserAutchentication = await AuthenticateUser(loginUserDto);
-            if(checkUserAutchentication.Succeeded)
+            var checkIfUserAutchenticated = await AuthenticateUser(loginUserDto);
+            if(!checkIfUserAutchenticated.Succeeded)
             {
-                var userId = await _userService.GetUserIdByEmailAsync(loginUserDto.Email);
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return NotFound(new { message = "User with provided email not found" });
-                }
-                var jwtToken = _jwtTokenService.GenerateJWT(userId);
-                var refreshToken = await _refreshTokenService.GenerateRefreshTokenAsync(userId);
-                return Ok(new 
-                { 
-                    Token = jwtToken,
-                    RefreshToken = refreshToken
-                });
+                return BadRequest(new { message = "Invalid login credentials" });
             }
 
-            return BadRequest(new { message = "Invalid login credentials" });
+            var userId = await _userService.GetUserIdByEmailAsync(loginUserDto.Email);
+            if (!userId.Succeeded)
+            {
+                return BadRequest(userId.Error);
+            }
+
+            var result = await _tokenManagementService.GenerateTokensAsync(userId.Value);
+
+            return Ok(result.Value);   
         }
 
         private async Task<Microsoft.AspNetCore.Identity.SignInResult> AuthenticateUser(LoginUserDto user)
@@ -76,10 +70,24 @@ namespace EventStock.API.Controllers
             return await _signInManager.PasswordSignInAsync(user.Email, user.Password, true, false);
         }
 
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody] CreateUserDto user)
+        {
+            var result = await _userService.CreateUserAsync(user);
+            if (!result.Succeeded)
+            {
+                var errors = result.Errors.Select(e => e.Description);
+                return BadRequest(errors);
+            }
+
+            return Ok();
+        }
+
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] RefreshTokenRequestDto refreshTokenDto)
         {
-            await _refreshTokenService.DeleteRefreshTokenAsync(refreshTokenDto.RefreshToken, needHash: true);
+            await _tokenManagementService.DeleteRefreshTokenAsync(refreshTokenDto.RefreshToken, needHash: true);
 
             return Ok();
         }
@@ -87,44 +95,28 @@ namespace EventStock.API.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequestDto refreshTokenDto)
         {
-            var refreshTokenFromDB = await _refreshTokenService.GetRefreshTokenAsync(refreshTokenDto.RefreshToken, needHash: true);
-            if (refreshTokenFromDB == null || !_refreshTokenService.CheckRefreshToken(refreshTokenFromDB))
+            var refreshTokenFromDB = await _tokenManagementService.GetRefreshTokenAsync(refreshTokenDto.RefreshToken, needHash: true);
+            if (!refreshTokenFromDB.Succeeded)
             {
-                return Unauthorized(new { message = "Invalid refresh token" });
+                return Unauthorized(refreshTokenFromDB.Error);
+            }
+            var checkIfTokenExpired = _tokenManagementService.CheckRefreshTokenExpiration(refreshTokenFromDB.Value);
+            if (!checkIfTokenExpired.Succeeded)
+            {
+                return Unauthorized(checkIfTokenExpired.Error);
             }
 
-            var newRefreshToken = await _refreshTokenService.UpdateRefreshTokenAsync(refreshTokenFromDB);
-            var newJwtToken = _jwtTokenService.GenerateJWT(UserId);
+            var result = await _tokenManagementService.GenerateTokensAsync(refreshTokenFromDB.Value, UserId);
 
-            return Ok(new
-            {
-                Token = newJwtToken,
-                RefreshToken = newRefreshToken
-            });
+            return Ok(result.Value);
         }
 
         [HttpDelete("revoke-tokens")]
         public async Task<IActionResult> RevokeRefreshTokens()
         {
-            await _refreshTokenService.RevokeRefreshTokensAsync(UserId);
+            await _tokenManagementService.RevokeRefreshTokensAsync(UserId);
 
             return Ok();
-        }
-
-        [HttpPost("register")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody] CreateUserDto user)
-        {
-            var result = await _userService.CreateUserAsync(user);
-            if (result.Succeeded)
-            {
-                return Ok();
-            }
-            else
-            {
-                var errors = result.Errors.Select(e => e.Description);
-                return BadRequest(errors);
-            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace EventStock.Application.Dto.RefreshToken
+﻿namespace EventStock.Application.Dto.Token
 {
     public record RefreshTokenRequestDto(string RefreshToken);
 }
