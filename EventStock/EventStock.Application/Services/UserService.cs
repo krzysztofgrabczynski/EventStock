@@ -85,13 +85,13 @@ namespace EventStock.Application.Services
             return await _userManager.DeleteAsync(user);
         }
 
-        public async Task<List<StockDto>> ListUsersStocksAsync(string userId)
+        public async Task<List<ViewStockDtoForList>> ListUsersStocksAsync(string userId)
         {
             var result = await _userRepository.ListUsersStocksAsync(userId);
-            var mappedStocksList = new List<StockDto>();
+            var mappedStocksList = new List<ViewStockDtoForList>();
             foreach (var stock in result)
             {
-                mappedStocksList.Add(_mapper.Map<StockDto>(stock));
+                mappedStocksList.Add(_mapper.Map<ViewStockDtoForList>(stock));
             }
 
             return mappedStocksList;

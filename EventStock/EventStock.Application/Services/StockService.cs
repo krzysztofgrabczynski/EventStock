@@ -54,7 +54,7 @@ namespace EventStock.Application.Services
             {
                 return Result.Failure(new PermissionDeniedResultError());
             }
-            
+
 
             var role = new IdentityRole(); // for test
             await _stockRepository.AddUserAsync(stock, user, role);
@@ -75,14 +75,46 @@ namespace EventStock.Application.Services
             return Result<int>.Success(id.Value); 
         }
 
-        public Task DeleteStockAsync(int id)
+        public async Task<Result> DeleteStockAsync(int stockId)
         {
-            throw new NotImplementedException();
+            var stock = await _stockRepository.GetStockAsync(stockId);
+            if (stock == null)
+            {
+                return Result.Failure(new StockDoesNotExistResultError());
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
+            if (!authorizationResult.Succeeded)
+            {
+                return Result.Failure(new PermissionDeniedResultError());
+            }
+
+            await _stockRepository.DeleteStockAsync(stock);
+            return Result.Success();
         }
 
-        public Task DeleteUserAsync(int id)
+        public async Task<Result> DeleteUserAsync(int stockId, string userId)
         {
-            throw new NotImplementedException();
+            var stock = await _stockRepository.GetStockAsync(stockId);
+            var user = await _userManager.FindByIdAsync(userId);
+            if (stock == null || user == null)
+            {
+                return Result.Failure(new StockAddUserResultError());
+            }
+
+            if (!stock.Users.Any(u => u.Id == userId))
+            {
+                return Result.Failure(new UserNotExistInStockResultError());
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
+            if (!authorizationResult.Succeeded)
+            {
+                return Result.Failure(new PermissionDeniedResultError());
+            }
+
+            await _stockRepository.DeleteUserAsync(stock, user);
+            return Result.Success();
         }
 
         public async Task<Result<ViewStockDto>> GetStockAsync(int id)
@@ -90,7 +122,7 @@ namespace EventStock.Application.Services
             var result = await _stockRepository.GetStockAsync(id);
             if (result == null)
             {
-                return Result<ViewStockDto>.Failure(new GetStockResultError());
+                return Result<ViewStockDto>.Failure(new StockDoesNotExistResultError());
             }
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, result, "IsStockUser");
@@ -138,7 +170,7 @@ namespace EventStock.Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<ViewStockDto> UpdateStockAsync(StockDto stock)
+        public Task<ViewStockDto> UpdateStockAsync(ViewStockDtoForList stock)
         {
             throw new NotImplementedException();
         }

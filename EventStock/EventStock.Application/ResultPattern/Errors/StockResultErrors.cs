@@ -15,14 +15,19 @@
         public UserExistInStockResultError() : base("UserExistInStock", "User is already assigned to this stock") { }
     }
 
-    public record GetStockResultError : ResultError
+    public record StockDoesNotExistResultError : ResultError
     {
-        public GetStockResultError() : base("GetStockError", "An error occurred while retrieving stock information") { }
+        public StockDoesNotExistResultError() : base("StockDoesNotExist", "Stock with provided ID does not exist") { }
     }
 
     public record PermissionDeniedResultError : ResultError
     {
         public PermissionDeniedResultError() : base("PermissionDenied", "You do not have permission to access that resource") { }
+    }
+
+    public record UserNotExistInStockResultError : ResultError
+    {
+        public UserNotExistInStockResultError() : base("UserNotExistInStock", "User with provided ID does not exist in stock") { }
     }
 }
 

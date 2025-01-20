@@ -29,6 +29,30 @@ namespace EventStock.API.Controllers
             return Ok(result.Value);
         }
 
+        [HttpGet("get-stock/{id}")]
+        public async Task<IActionResult> GetStock(int id)
+        {
+            var result = await _stockService.GetStockAsync(id);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
+        }
+
+        [HttpDelete("delete-stock/{id}")]
+        public async Task<IActionResult> DeleteStock(int id)
+        {
+            var result = await _stockService.DeleteStockAsync(id);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Error);
+            }
+
+            return Ok();
+        }
+
         [HttpPost("add-user")]
         public async Task<IActionResult> AddUserToStock([FromBody] AddUserToStockDto request)
         {
@@ -41,16 +65,16 @@ namespace EventStock.API.Controllers
             return Ok();
         }
 
-        [HttpGet("get-stock/{id}")]
-        public async Task<IActionResult> GetStock(int id)
+        [HttpDelete("delete-user")]
+        public async Task<IActionResult> DeleteUserFromStock([FromBody] DeleteUserFromStockDto request)
         {
-            var result = await _stockService.GetStockAsync(id);
+            var result = await _stockService.DeleteUserAsync(request.StockId, request.UserId);
             if (!result.Succeeded)
             {
                 return BadRequest(result.Error);
             }
 
-            return Ok(result.Value);
+            return Ok();
         }
     }
 }

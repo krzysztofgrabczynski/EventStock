@@ -24,7 +24,7 @@ namespace EventStock.Infrastructure.Repositories
             };
 
             await _context.UserStockRoles.AddAsync(userStockRole);
-            var result = await _context.SaveChangesAsync();    
+            await _context.SaveChangesAsync();    
         }
 
         public async Task<int?> CreateStockAsync(Stock stock)
@@ -36,6 +36,19 @@ namespace EventStock.Infrastructure.Repositories
                 return stock.Id;
             }
             return null;
+        }
+
+        public async Task DeleteStockAsync(Stock stock)
+        {
+            _context.Stocks.Remove(stock);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteUserAsync(Stock stock, User user)
+        {
+            stock.Users.Remove(user);
+            await _context.UserStockRoles.Where(u => u.User == user && u.Stock == stock).ExecuteDeleteAsync();
+            await _context.SaveChangesAsync();
         }
 
         public async Task<Stock?> GetStockAsync(int id)
