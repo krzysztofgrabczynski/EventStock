@@ -6,6 +6,7 @@ using EventStock.Application.Interfaces;
 using EventStock.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using EventStock.Application.ResultPattern.Errors;
+using EventStock.Domain.Interfaces;
 
 namespace EventStock.Application.Services
 {
@@ -13,10 +14,12 @@ namespace EventStock.Application.Services
     {
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
-        public UserService(IMapper mapper, UserManager<User> userManager)
+        private readonly IUserRepository _userRepository;
+        public UserService(IMapper mapper, UserManager<User> userManager, IUserRepository userRepository)
         {
             _mapper = mapper;
             _userManager = userManager;
+            _userRepository = userRepository;
         }
 
         public async Task<IdentityResult> CreateUserAsync(CreateUserDto userDto)
@@ -82,9 +85,16 @@ namespace EventStock.Application.Services
             return await _userManager.DeleteAsync(user);
         }
 
-        public Task<List<StockDto>> ListUsersStocksAsync(int id)
+        public async Task<List<StockDto>> ListUsersStocksAsync(string userId)
         {
-            throw new NotImplementedException();
+            var result = await _userRepository.ListUsersStocksAsync(userId);
+            var mappedStocksList = new List<StockDto>();
+            foreach (var stock in result)
+            {
+                mappedStocksList.Add(_mapper.Map<StockDto>(stock));
+            }
+
+            return mappedStocksList;
         }    
 
         private class UserNotFoundIdentityError : IdentityError
