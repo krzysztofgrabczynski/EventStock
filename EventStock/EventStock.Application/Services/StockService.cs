@@ -48,7 +48,7 @@ namespace EventStock.Application.Services
             {
                 return Result.Failure(new UserExistInStockResultError());
             }
-
+            
             var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
             if (!authorizationResult.Succeeded)
             {

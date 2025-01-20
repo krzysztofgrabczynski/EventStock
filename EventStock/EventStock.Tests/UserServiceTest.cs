@@ -3,6 +3,7 @@ using EventStock.Application.Dto.User;
 using EventStock.Application.Interfaces;
 using EventStock.Application.ResultPattern.Errors;
 using EventStock.Application.Services;
+using EventStock.Domain.Interfaces;
 using EventStock.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Moq;
@@ -14,12 +15,14 @@ namespace EventStock.Tests
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<UserManager<User>> _userManagerMock;
         private readonly IUserService _userService;
+        private readonly Mock<IUserRepository> _userRepositoryMock;
 
         public UserServiceTest()
         {
             _mapperMock = new Mock<IMapper>();
             _userManagerMock = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null, null, null, null, null, null, null, null);
-            _userService = new UserService(_mapperMock.Object, _userManagerMock.Object);
+            _userRepositoryMock = new Mock<IUserRepository>();
+            _userService = new UserService(_mapperMock.Object, _userManagerMock.Object, _userRepositoryMock.Object);
         }
 
         [Fact]
