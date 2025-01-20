@@ -1,19 +1,19 @@
 ﻿using EventStock.Application.Dto.Equipment;
 using EventStock.Application.Dto.Event;
 using EventStock.Application.Dto.Stock;
-using EventStock.Domain.Models;
+using EventStock.Application.ResultPattern;
 using Microsoft.AspNetCore.Identity;
 
 namespace EventStock.Application.Interfaces
 {
     public interface IStockService
     {
-        Task<int> CreateStockAsync(StockDto stock);
-        Task<ViewStockDto> GetStockAsync(int id);
+        Task<Result<int>> CreateStockAsync(CreateStockDto stock);
+        Task<Result<ViewStockDto>> GetStockAsync(int id);
         Task<ViewStockDto> UpdateStockAsync(StockDto stock);
         Task DeleteStockAsync(int id);
 
-        Task AddUserAsync(User user);
+        Task <Result> AddUserAsync(int stockId, string userId);
         Task DeleteUserAsync(int id);
         Task<List<StockUserDto>> ListUsersByStockIdAsync(int id);
         Task AddRoleToStockUserAsync(int id, IdentityRole role);
