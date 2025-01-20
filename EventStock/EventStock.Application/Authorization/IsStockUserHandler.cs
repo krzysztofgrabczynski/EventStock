@@ -10,7 +10,7 @@ namespace EventStock.Application.Authorization
         {
             var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (!resource.UserStockRoles.Any(usr => usr.User.Id == userId && usr.Role.Name == "StockAdmin"))
+            if (!resource.UserStockRoles.Any(usr => usr.User.Id == userId))
             {
                 context.Fail();
             }
