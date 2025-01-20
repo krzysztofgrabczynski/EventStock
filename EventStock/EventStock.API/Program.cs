@@ -1,3 +1,4 @@
+using EventStock.Application.Authorization;
 using EventStock.Application.Interfaces;
 using EventStock.Application.Mapping;
 using EventStock.Application.Services;
@@ -6,10 +7,13 @@ using EventStock.Domain.Models;
 using EventStock.Infrastructure;
 using EventStock.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,11 +42,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("IsStockUser", policy => policy.Requirements.Add(new IsStockUserRequirement()));
+});
+
 // DI
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddSingleton<IAuthorizationHandler, IsStockUserHandler>();
 builder.Services.AddTransient<ITokenManagementService, TokenManagementService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddTransient<IStockService, StockService>();
+builder.Services.AddTransient<IStockRepository, StockRepository>();
 
 builder.Services.AddControllers();
 
