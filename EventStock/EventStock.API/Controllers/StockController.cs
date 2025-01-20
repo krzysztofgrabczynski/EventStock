@@ -76,5 +76,17 @@ namespace EventStock.API.Controllers
 
             return Ok();
         }
+
+        [HttpGet("list-stock-users/{id}")]
+        public async Task<IActionResult> ListUsersInStock(int id)
+        {
+            var result = await _stockService.ListUsersByStockIdAsync(id);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
+        }
     }
 }

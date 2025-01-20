@@ -2,6 +2,7 @@
 using EventStock.Application.Dto.Equipment;
 using EventStock.Application.Dto.Event;
 using EventStock.Application.Dto.Stock;
+using EventStock.Application.Dto.User;
 using EventStock.Application.Interfaces;
 using EventStock.Application.ResultPattern;
 using EventStock.Application.ResultPattern.Errors;
@@ -10,6 +11,7 @@ using EventStock.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
 
 namespace EventStock.Application.Services
 {
@@ -165,9 +167,30 @@ namespace EventStock.Application.Services
             throw new NotImplementedException();
         }
 
-        public Task<List<StockUserDto>> ListUsersByStockIdAsync(int id)
+        public async Task<Result<List<UserDto>>> ListUsersByStockIdAsync(int stockId)
         {
-            throw new NotImplementedException();
+            var stock = await _stockRepository.GetStockAsync(stockId);
+            if (stock == null)
+            {
+                return Result<List<UserDto>>.Failure(new StockAddUserResultError());
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
+            if (!authorizationResult.Succeeded)
+            {
+                return Result<List<UserDto>>.Failure(new PermissionDeniedResultError());
+            }
+
+            var users = stock.Users.ToList();
+
+            var mappedUsers = new List<UserDto>();
+            foreach (var user in users)
+            {
+                var mappedUser = _mapper.Map<UserDto>(user);
+                mappedUsers.Add(mappedUser);
+            }
+
+            return Result<List<UserDto>>.Success(mappedUsers);
         }
 
         public Task<ViewStockDto> UpdateStockAsync(ViewStockDtoForList stock)
