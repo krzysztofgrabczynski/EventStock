@@ -11,7 +11,6 @@ using EventStock.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
 
 namespace EventStock.Application.Services
 {
