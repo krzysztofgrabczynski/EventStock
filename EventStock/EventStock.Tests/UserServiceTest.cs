@@ -153,7 +153,7 @@ namespace EventStock.Tests
         }
 
         [Fact]
-        public async Task ListUsersStocksAsync()
+        public async Task ListUsersStocksAsyncTest()
         {
             // Arrange 
             var stockList = new List<Stock>()
