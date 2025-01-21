@@ -172,7 +172,7 @@ namespace EventStock.Application.Services
             var stock = await _stockRepository.GetStockAsync(stockId);
             if (stock == null)
             {
-                return Result<List<UserDto>>.Failure(new StockAddUserResultError());
+                return Result<List<UserDto>>.Failure(new StockDoesNotExistResultError());
             }
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
@@ -193,9 +193,26 @@ namespace EventStock.Application.Services
             return Result<List<UserDto>>.Success(mappedUsers);
         }
 
-        public Task<ViewStockDto> UpdateStockAsync(ViewStockDtoForList stock)
+        public async Task<Result> UpdateStockAsync(int stockId, ViewStockDtoForList stockDto)
         {
-            throw new NotImplementedException();
+            var stock = await _stockRepository.GetStockAsync(stockId);
+            if (stock == null)
+            {
+                return Result.Failure(new StockDoesNotExistResultError()); 
+            }
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
+            if (!authorizationResult.Succeeded)
+            {
+                return Result.Failure(new PermissionDeniedResultError());
+            }
+
+            stock.Name = stockDto.Name ?? stock.Name;
+            stock.Address = stockDto.Address ?? stockDto.Address;
+
+            await _stockRepository.UpdateStockAsync(stock);
+
+            return Result.Success();
         }
     }
 }

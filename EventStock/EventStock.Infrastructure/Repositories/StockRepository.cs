@@ -38,6 +38,12 @@ namespace EventStock.Infrastructure.Repositories
             return null;
         }
 
+        public async Task UpdateStockAsync(Stock stock)
+        {
+            _context.Stocks.Update(stock);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task DeleteStockAsync(Stock stock)
         {
             _context.Stocks.Remove(stock);

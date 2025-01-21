@@ -41,6 +41,19 @@ namespace EventStock.API.Controllers
             return Ok(result.Value);
         }
 
+        [HttpPut("update-stock/{id}")]
+        public async Task<IActionResult> UpdateStock(int id, [FromBody] ViewStockDtoForList stockDto)
+        {
+            var result = await _stockService.UpdateStockAsync(id, stockDto);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Error);
+            }
+
+            return Ok();
+        }
+
+
         [HttpDelete("delete-stock/{id}")]
         public async Task<IActionResult> DeleteStock(int id)
         {
