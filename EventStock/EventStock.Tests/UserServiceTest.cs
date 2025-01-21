@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using EventStock.Application.Dto.Stock;
 using EventStock.Application.Dto.User;
 using EventStock.Application.Interfaces;
 using EventStock.Application.ResultPattern.Errors;
@@ -149,6 +150,27 @@ namespace EventStock.Tests
             Assert.NotNull(result);
             Assert.False(result.Succeeded);
             Assert.NotEqual(result.Error, ResultError.None);
+        }
+
+        [Fact]
+        public async Task ListUsersStocksAsync()
+        {
+            // Arrange 
+            var stockList = new List<Stock>()
+            {
+                new Stock() { Id = 1, Name = "TestStock1"},
+                new Stock() { Id = 2, Name = "TestStock2" }
+            };
+            _mapperMock.Setup(m => m.Map<ViewStockDtoForList>(It.IsAny<Stock>())).Returns<Stock>(s => new ViewStockDtoForList() { Name = s.Name });
+            _userRepositoryMock.Setup(u => u.ListUsersStocksAsync(It.IsAny<string>())).ReturnsAsync(stockList);
+
+            // Act
+            var result = await _userService.ListUsersStocksAsync("user-id");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(result[0].Name, stockList[0].Name);
+            Assert.Equal(result[1].Name, stockList[1].Name);
         }
     }
 }
