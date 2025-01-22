@@ -15,6 +15,7 @@ namespace EventStock.Application.Services
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly IUserRepository _userRepository;
+
         public UserService(IMapper mapper, UserManager<User> userManager, IUserRepository userRepository)
         {
             _mapper = mapper;

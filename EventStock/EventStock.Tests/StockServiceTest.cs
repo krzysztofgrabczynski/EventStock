@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EventStock.Application.Dto.Stock;
+using EventStock.Application.ResultPattern;
 using EventStock.Application.Services;
 using EventStock.Domain.Models;
 using EventStock.Infrastructure.Repositories;
@@ -7,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Moq;
+using System.Security.Claims;
 
 namespace EventStock.Tests
 {
@@ -27,6 +29,26 @@ namespace EventStock.Tests
             _authorizationServiceMock = new Mock<IAuthorizationService>();
             _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
             _stockService = new StockService(_mapperMock.Object, _stockRepositoryMock.Object, _userManagerMock.Object, _authorizationServiceMock.Object, _httpContextAccessorMock.Object);
+            
+            var mockHttpContext = new Mock<HttpContext>();
+            var mockUser = new ClaimsPrincipal(new ClaimsIdentity(new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, "test@example.com")
+            }));
+
+            mockHttpContext.Setup(c => c.User).Returns(mockUser);
+
+            _httpContextAccessorMock
+                .Setup(h => h.HttpContext)
+                .Returns(mockHttpContext.Object);
+
+            _authorizationServiceMock.Setup(a =>
+                a.AuthorizeAsync(
+                    It.IsAny<ClaimsPrincipal>(),
+                    It.IsAny<object?>(),
+                    It.IsAny<string>()
+                    ))
+                .ReturnsAsync(AuthorizationResult.Success());
         }
 
         [Fact]
@@ -72,6 +94,73 @@ namespace EventStock.Tests
 
             // Act
             var result = await _stockService.CreateStockAsync(stock);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.False(result.Succeeded);
+        }
+
+        [Fact]
+        public async Task GetStockAsyncPositiveTest()
+        {
+            // Arrange
+            var user = new User()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "test@email.com",
+                FirstName = "TestFirstName",
+                LastName = "TestLastName"
+            };
+            var stock = new Stock()
+            {
+                Id = 1,
+                Name = "TestStock",
+                Users = new List<User>() { user }
+            };
+            _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
+            _mapperMock.Setup(m => m.Map<ViewStockDto>(It.IsAny<Stock>())).Returns<Stock>(s => new ViewStockDto()
+            {
+                Name = s.Name,
+                Address = s.Address,
+                Users = s.Users.Select(u => new UserWithRoleDto()
+                {
+                    Email = u.Email,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName
+                   
+                }).ToList()
+            });
+
+            // Act
+            var result = await _stockService.GetStockAsync(stock.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.True(result.Succeeded);
+            Assert.Equal(user.Email, result.Value.Users.First().Email);
+        }
+
+        [Fact]
+        public async Task GetStockAsyncNegatieTest()
+        {
+            // Arrange
+            var user = new User()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "test@email.com",
+                FirstName = "TestFirstName",
+                LastName = "TestLastName"
+            };
+            var stock = new Stock()
+            {
+                Id = 1,
+                Name = "TestStock",
+                Users = new List<User>() { user }
+            };
+            _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync((Stock?)null);
+            
+            // Act
+            var result = await _stockService.GetStockAsync(stock.Id);
 
             // Assert
             Assert.NotNull(result);
