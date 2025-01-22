@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using EventStock.Application.Dto.Stock;
+using EventStock.Application.Dto.User;
 using EventStock.Application.ResultPattern;
 using EventStock.Application.Services;
 using EventStock.Domain.Models;
@@ -165,6 +166,78 @@ namespace EventStock.Tests
             // Assert
             Assert.NotNull(result);
             Assert.False(result.Succeeded);
+        }
+
+        [Fact]
+        public async Task DeleteUserAsyncWithNotExistingUserInStockTest()
+        {
+            // Arrange
+            var user = new User()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "test@email.com",
+                FirstName = "TestFirstName",
+                LastName = "TestLastName"
+            };
+            var stock = new Stock()
+            {
+                Id = 1,
+                Name = "TestStock",
+                Users = new List<User>()
+            };
+            _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
+            _userManagerMock.Setup(u => u.FindByIdAsync(user.Id)).ReturnsAsync(user);
+
+            // Act
+            var result = await _stockService.DeleteUserAsync(stock.Id, user.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.False(result.Succeeded);
+            Assert.Equal("UserNotExistInStock", result.Error.Code);
+        }
+
+        [Fact]
+        public async Task ListUsersByStockIdAsyncPositiveTest()
+        {
+            // Arrange
+            var user1 = new User()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "test1@email.com",
+                FirstName = "TestFirstName1",
+                LastName = "TestLastName1"
+            };
+            var user2 = new User()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "test2@email.com",
+                FirstName = "TestFirstName2",
+                LastName = "TestLastName2"
+            };
+            var stock = new Stock()
+            {
+                Id = 1,
+                Name = "TestStock",
+                Users = new List<User>() { user1, user2 }
+            };
+            _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
+            _mapperMock.Setup(m => m.Map<UserDto>(It.IsAny<User>())).Returns<User>(u =>
+                new UserDto()
+                {
+                    Email = u.Email,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName
+                });
+
+            // Act
+            var result = await _stockService.ListUsersByStockIdAsync(stock.Id);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.True(result.Succeeded);
+            Assert.Equal(result.Value.First().Email, user1.Email);
+            Assert.Equal(result.Value.Last().Email, user2.Email);
         }
 
     }
