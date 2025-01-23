@@ -6,6 +6,7 @@ using EventStock.Application.Dto.User;
 using EventStock.Application.Interfaces;
 using EventStock.Application.ResultPattern;
 using EventStock.Application.ResultPattern.Errors;
+using EventStock.Domain.Interfaces;
 using EventStock.Domain.Models;
 using EventStock.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -19,14 +20,16 @@ namespace EventStock.Application.Services
         private readonly IMapper _mapper;
         private readonly IStockRepository _stockRepository;
         private readonly UserManager<User> _userManager;
+        private readonly IRoleRepository _roleRepository;
         private readonly IAuthorizationService _authorizationService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public StockService(IMapper mapper, IStockRepository stockRepository, UserManager<User> userManager, IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor)
+        public StockService(IMapper mapper, IStockRepository stockRepository, UserManager<User> userManager, IRoleRepository roleRepository, IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor)
         {
             _mapper = mapper;
             _stockRepository = stockRepository;
             _userManager = userManager;
+            _roleRepository = roleRepository;
             _authorizationService = authorizationService;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -36,10 +39,17 @@ namespace EventStock.Application.Services
             throw new NotImplementedException();
         }
 
-        public async Task<Result> AddUserAsync(int stockId, string userId)
+        public async Task<Result> AddUserAsync(int stockId, string userId, string roleName)
         {
             var stock = await _stockRepository.GetStockAsync(stockId);
             var user = await _userManager.FindByIdAsync(userId);
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
+            if (!authorizationResult.Succeeded)
+            {
+                return Result.Failure(new PermissionDeniedResultError());
+            }
+
             if (stock == null || user == null)
             {
                 return Result.Failure(new StockAddUserResultError());
@@ -49,17 +59,17 @@ namespace EventStock.Application.Services
             {
                 return Result.Failure(new UserExistInStockResultError());
             }
-            
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
-            if (!authorizationResult.Succeeded)
+
+            var role = await _roleRepository.GetRoleByNameAsync(roleName);
+            if (role == null)
             {
-                return Result.Failure(new PermissionDeniedResultError());
+                return Result.Failure(new RoleDoesNotExistResultError());
             }
 
-
-            var role = new IdentityRole(); // for test
-            await _stockRepository.AddUserAsync(stock, user, role);
-
+            if (!await _stockRepository.AddUserAsync(stock, user, role))
+            {
+                return Result.Failure(new StockAddUserResultError());
+            }
 
             return Result.Success();
         }

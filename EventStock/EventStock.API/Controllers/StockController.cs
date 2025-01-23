@@ -1,5 +1,6 @@
 ﻿using EventStock.Application.Dto.Stock;
 using EventStock.Application.Interfaces;
+using EventStock.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -69,7 +70,12 @@ namespace EventStock.API.Controllers
         [HttpPost("add-user")]
         public async Task<IActionResult> AddUserToStock([FromBody] AddUserToStockDto request)
         {
-            var result = await _stockService.AddUserAsync(request.StockId, request.UserId);
+            if (!Enum.IsDefined(typeof(Role), request.Role))
+            {
+                return BadRequest("Provided role does not exist");
+            }
+
+            var result = await _stockService.AddUserAsync(request.StockId, request.UserId, request.Role.ToString());
             if (!result.Succeeded)
             {
                 return BadRequest(result.Error);

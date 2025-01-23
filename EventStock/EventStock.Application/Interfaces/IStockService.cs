@@ -14,7 +14,7 @@ namespace EventStock.Application.Interfaces
         Task<Result> UpdateStockAsync(int id, ViewStockDtoForList stockDto);
         Task<Result> DeleteStockAsync(int id);
 
-        Task<Result> AddUserAsync(int stockId, string userId);
+        Task<Result> AddUserAsync(int stockId, string userId, string roleName);
         Task<Result> DeleteUserAsync(int stockId, string userId);
         Task<Result<List<UserDto>>> ListUsersByStockIdAsync(int id);
         Task AddRoleToStockUserAsync(int id, IdentityRole role);

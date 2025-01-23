@@ -29,5 +29,10 @@
     {
         public UserNotExistInStockResultError() : base("UserNotExistInStock", "User with provided ID does not exist in stock") { }
     }
+
+    public record RoleDoesNotExistResultError : ResultError
+    {
+        public RoleDoesNotExistResultError() : base("RoleDoesNotExist", "Provided role does not exist") { }
+    }
 }
 

@@ -7,24 +7,40 @@ namespace EventStock.Infrastructure.Repositories
     public class StockRepository : IStockRepository
     {
         private readonly Context _context;
+        private readonly UserManager<User> _userManager;
 
-        public StockRepository(Context context)
+        public StockRepository(Context context, UserManager<User> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        public async Task AddUserAsync(Stock stock, User user, IdentityRole role)
+        public async Task<bool> AddUserAsync(Stock stock, User user, IdentityRole role)
         {
-            stock.Users.Add(user);
-            var userStockRole = new UserStockRole()
+            using var transaction = _context.Database.BeginTransaction();
+            try
             {
-                User = user,
-                Stock = stock,
-                Role = role
-            };
+                await _userManager.AddToRoleAsync(user, role.Name!);
+                stock.Users.Add(user);
+                var userStockRole = new UserStockRole()
+                {
+                    User = user,
+                    Stock = stock,
+                    Role = role
+                };
+                await _context.UserStockRoles.AddAsync(userStockRole);
 
-            await _context.UserStockRoles.AddAsync(userStockRole);
-            await _context.SaveChangesAsync();    
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                return false;
+            }
         }
 
         public async Task<int?> CreateStockAsync(Stock stock)

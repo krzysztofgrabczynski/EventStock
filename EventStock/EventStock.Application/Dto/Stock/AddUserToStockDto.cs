@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using EventStock.Domain.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace EventStock.Application.Dto.Stock
 {
@@ -8,7 +9,7 @@ namespace EventStock.Application.Dto.Stock
         public int StockId { get; set; }
         [Required]
         public string UserId { get; set; }
-        
-        public string? Role { get; set; }
+        [Required]
+        public Role Role { get; set; }
     }
 }
