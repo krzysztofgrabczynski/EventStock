@@ -2,7 +2,9 @@
 using EventStock.Application.Dto.Stock;
 using EventStock.Application.Dto.User;
 using EventStock.Application.ResultPattern;
+using EventStock.Application.ResultPattern.Errors;
 using EventStock.Application.Services;
+using EventStock.Domain.Interfaces;
 using EventStock.Domain.Models;
 using EventStock.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authorization;
@@ -17,6 +19,7 @@ namespace EventStock.Tests
     {
         private readonly Mock<IMapper> _mapperMock;
         private readonly Mock<IStockRepository> _stockRepositoryMock;
+        private readonly Mock<IRoleRepository> _roleRepositoryMock; 
         private readonly Mock<UserManager<User>> _userManagerMock;
         private readonly Mock<IAuthorizationService> _authorizationServiceMock;
         private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
@@ -27,9 +30,10 @@ namespace EventStock.Tests
             _mapperMock = new Mock<IMapper>();
             _userManagerMock = new Mock<UserManager<User>>(Mock.Of<IUserStore<User>>(), null, null, null, null, null, null, null, null);
             _stockRepositoryMock = new Mock<IStockRepository>();
+            _roleRepositoryMock = new Mock<IRoleRepository>();
             _authorizationServiceMock = new Mock<IAuthorizationService>();
             _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
-            _stockService = new StockService(_mapperMock.Object, _stockRepositoryMock.Object, _userManagerMock.Object, _authorizationServiceMock.Object, _httpContextAccessorMock.Object);
+            _stockService = new StockService(_mapperMock.Object, _stockRepositoryMock.Object, _userManagerMock.Object, _roleRepositoryMock.Object, _authorizationServiceMock.Object, _httpContextAccessorMock.Object);
             
             var mockHttpContext = new Mock<HttpContext>();
             var mockUser = new ClaimsPrincipal(new ClaimsIdentity(new[]
@@ -240,5 +244,111 @@ namespace EventStock.Tests
             Assert.Equal(result.Value.Last().Email, user2.Email);
         }
 
+        [Fact]
+        public async Task AddUserAsyncPositiveTest()
+        {
+            // Arrange
+            var user = new User()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "test@email.com",
+                FirstName = "TestFirstName",
+                LastName = "TestLastName"
+            };
+            var stock = new Stock()
+            {
+                Id = 1,
+                Name = "TestStock",
+                Users = new List<User>()
+            };
+            var role = Role.StockAdmin;
+            var identityRole = new IdentityRole()
+            {
+                Name = "StockAdmin",
+                NormalizedName = "StockAdmin"
+            };
+            _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
+            _userManagerMock.Setup(u => u.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            _roleRepositoryMock.Setup(r => r.GetRoleByNameAsync(role.ToString())).ReturnsAsync(identityRole);
+            _stockRepositoryMock.Setup(s => s.AddUserAsync(stock, user, identityRole)).ReturnsAsync(true);
+
+            // Act
+            var result = await _stockService.AddUserAsync(stock.Id, user.Id, role.ToString());
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.True(result.Succeeded);
+        }
+
+        [Fact]
+        public async Task AddUserAsyncWithUserAlreadyAssignedToStockTest()
+        {
+            // Arrange
+            var user = new User()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "test@email.com",
+                FirstName = "TestFirstName",
+                LastName = "TestLastName"
+            };
+            var stock = new Stock()
+            {
+                Id = 1,
+                Name = "TestStock",
+                Users = new List<User>() { user }
+            };
+            var role = Role.StockAdmin;
+            var identityRole = new IdentityRole()
+            {
+                Name = "StockAdmin",
+                NormalizedName = "StockAdmin"
+            };
+            _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
+            _userManagerMock.Setup(u => u.FindByIdAsync(user.Id)).ReturnsAsync(user);
+
+            // Act
+            var result = await _stockService.AddUserAsync(stock.Id, user.Id, role.ToString());
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.False(result.Succeeded);
+            Assert.Equal("UserExistInStock", result.Error.Code);
+        }
+
+        [Fact]
+        public async Task AddUserAsyncWithInvalidRoleTest()
+        {
+            // Arrange
+            var user = new User()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "test@email.com",
+                FirstName = "TestFirstName",
+                LastName = "TestLastName"
+            };
+            var stock = new Stock()
+            {
+                Id = 1,
+                Name = "TestStock",
+                Users = new List<User>()
+            };
+            var role = "InvalidRole";
+            var identityRole = new IdentityRole()
+            {
+                Name = "StockAdmin",
+                NormalizedName = "StockAdmin"
+            };
+            _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
+            _userManagerMock.Setup(u => u.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            _roleRepositoryMock.Setup(r => r.GetRoleByNameAsync(role.ToString())).ReturnsAsync((IdentityRole?)null);
+
+            // Act
+            var result = await _stockService.AddUserAsync(stock.Id, user.Id, role.ToString());
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.False(result.Succeeded);
+            Assert.Equal("RoleDoesNotExist", result.Error.Code);
+        }
     }
 }
