@@ -186,26 +186,6 @@ namespace EventStock.Application.Services
             return Result<ViewStockDto>.Success(mappedStock);
         }
 
-        public Task<List<ViewEquipmentDto>> ListAvailableStockEquipmentInDateAsync(int id, DateTime date)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<ViewEquipmentDto>> ListStockEquipmentAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<ViewEventDto>> ListStockEventsAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<ViewEventDto>> ListStockEventsAsync(int id, DateTime date)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Result<List<UserDto>>> ListUsersByStockIdAsync(int stockId)
         {
             var stock = await _stockRepository.GetStockAsync(stockId);
@@ -252,6 +232,26 @@ namespace EventStock.Application.Services
             await _stockRepository.UpdateStockAsync(stock);
 
             return Result.Success();
+        }
+
+        public Task<List<ViewEquipmentDto>> ListAvailableStockEquipmentInDateAsync(int id, DateTime date)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<ViewEquipmentDto>> ListStockEquipmentAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<ViewEventDto>> ListStockEventsAsync(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<List<ViewEventDto>> ListStockEventsAsync(int id, DateTime date)
+        {
+            throw new NotImplementedException();
         }
     }
 }
