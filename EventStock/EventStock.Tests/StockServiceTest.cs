@@ -2,7 +2,6 @@
 using EventStock.Application.Dto.Stock;
 using EventStock.Application.Dto.User;
 using EventStock.Application.ResultPattern;
-using EventStock.Application.ResultPattern.Errors;
 using EventStock.Application.Services;
 using EventStock.Domain.Interfaces;
 using EventStock.Domain.Models;
@@ -349,6 +348,77 @@ namespace EventStock.Tests
             Assert.NotNull(result);
             Assert.False(result.Succeeded);
             Assert.Equal("RoleDoesNotExist", result.Error.Code);
+        }
+
+        [Fact]
+        public async Task UpdateUserRoleAsyncPositiveTest()
+        {
+            // Arrange
+            var user = new User()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "test@email.com",
+                FirstName = "TestFirstName",
+                LastName = "TestLastName"
+            };
+            var stock = new Stock()
+            {
+                Id = 1,
+                Name = "TestStock",
+                Users = new List<User>() { user }
+            };
+            var role = Role.StockUser;
+            var newIdentityRole = new IdentityRole()
+            {
+                Name = "StockAdmin",
+                NormalizedName = "StockAdmin"
+            };
+            _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
+            _userManagerMock.Setup(u => u.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            _roleRepositoryMock.Setup(r => r.GetRoleByNameAsync(role.ToString())).ReturnsAsync(newIdentityRole);
+            _stockRepositoryMock.Setup(s => s.UpdateUserRoleAsync(stock, user, newIdentityRole)).ReturnsAsync(true);
+
+            // Act
+            var result = await _stockService.UpdateUserRoleAsync(stock.Id, user.Id, role.ToString());
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.True(result.Succeeded);
+        }
+
+        [Fact]
+        public async Task UpdateUserRoleAsyncWithUserNotAssignedToStockTest()
+        {
+            // Arrange
+            var user = new User()
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "test@email.com",
+                FirstName = "TestFirstName",
+                LastName = "TestLastName"
+            };
+            var stock = new Stock()
+            {
+                Id = 1,
+                Name = "TestStock",
+                Users = new List<User>()
+            };
+            var role = Role.StockUser;
+            var newIdentityRole = new IdentityRole()
+            {
+                Name = "StockAdmin",
+                NormalizedName = "StockAdmin"
+            };
+            _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
+            _userManagerMock.Setup(u => u.FindByIdAsync(user.Id)).ReturnsAsync(user);
+
+            // Act
+            var result = await _stockService.UpdateUserRoleAsync(stock.Id, user.Id, role.ToString());
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.False(result.Succeeded);
+            Assert.Equal("UserNotExistInStock", result.Error.Code);
         }
     }
 }
