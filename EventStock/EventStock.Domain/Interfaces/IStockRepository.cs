@@ -10,6 +10,7 @@ namespace EventStock.Infrastructure.Repositories
         Task<Stock?> GetStockAsync(int id);
         Task UpdateStockAsync(Stock stock);
         Task<bool> AddUserAsync(Stock stock, User user, IdentityRole role);
+        Task<bool> UpdateUserRoleAsync(Stock stock, User user, IdentityRole role);
         Task DeleteUserAsync(Stock stock, User user);
     }
 }

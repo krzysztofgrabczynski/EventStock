@@ -84,6 +84,23 @@ namespace EventStock.API.Controllers
             return Ok();
         }
 
+        [HttpPut("update-user-role")]
+        public async Task<IActionResult> UpdateUserRoleInStock([FromBody] AddUserToStockDto request)
+        {
+            if (!Enum.IsDefined(typeof(Role), request.Role))
+            {
+                return BadRequest("Provided role does not exist");
+            }
+
+            var result = await _stockService.UpdateUserRoleAsync(request.StockId, request.UserId, request.Role.ToString());
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Error);
+            }
+
+            return Ok();
+        }
+
         [HttpDelete("delete-user")]
         public async Task<IActionResult> DeleteUserFromStock([FromBody] DeleteUserFromStockDto request)
         {

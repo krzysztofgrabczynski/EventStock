@@ -34,5 +34,10 @@
     {
         public RoleDoesNotExistResultError() : base("RoleDoesNotExist", "Provided role does not exist") { }
     }
+
+    public record UpdateUserRoleResultError : ResultError
+    {
+        public UpdateUserRoleResultError() : base("StockUpdateUserRoleError", "An error occurred while updating user role in stock") { }
+    }
 }
 

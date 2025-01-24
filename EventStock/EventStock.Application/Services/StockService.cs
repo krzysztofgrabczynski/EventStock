@@ -34,11 +34,6 @@ namespace EventStock.Application.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public Task AddRoleToStockUserAsync(int id, IdentityRole role)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<Result> AddUserAsync(int stockId, string userId, string roleName)
         {
             var stock = await _stockRepository.GetStockAsync(stockId);
@@ -71,6 +66,41 @@ namespace EventStock.Application.Services
                 return Result.Failure(new StockAddUserResultError());
             }
 
+            return Result.Success();
+        }
+
+        public async Task<Result> UpdateUserRoleAsync(int stockId, string userId, string roleName)
+        {
+            var stock = await _stockRepository.GetStockAsync(stockId);
+            var user = await _userManager.FindByIdAsync(userId);
+
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
+            if (!authorizationResult.Succeeded)
+            {
+                return Result.Failure(new PermissionDeniedResultError());
+            }
+
+            if (stock == null || user == null)
+            {
+                return Result.Failure(new StockAddUserResultError());
+            }
+
+            if (!stock.Users.Any(u => u.Id == userId))
+            {
+                return Result.Failure(new UserNotExistInStockResultError());
+            }
+
+            var role = await _roleRepository.GetRoleByNameAsync(roleName);
+            if (role == null)
+            {
+                return Result.Failure(new RoleDoesNotExistResultError());
+            }
+
+            if (!await _stockRepository.UpdateUserRoleAsync(stock, user, role))
+            {
+                return Result.Failure(new UpdateUserRoleResultError());
+            }
+            
             return Result.Success();
         }
 

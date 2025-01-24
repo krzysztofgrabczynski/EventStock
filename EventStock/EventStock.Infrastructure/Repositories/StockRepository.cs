@@ -17,7 +17,7 @@ namespace EventStock.Infrastructure.Repositories
 
         public async Task<bool> AddUserAsync(Stock stock, User user, IdentityRole role)
         {
-            using var transaction = _context.Database.BeginTransaction();
+            using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
                 await _userManager.AddToRoleAsync(user, role.Name!);
@@ -80,6 +80,54 @@ namespace EventStock.Infrastructure.Repositories
                 .Include(s => s.UserStockRoles)
                     .ThenInclude(usr => usr.Role)
                 .FirstOrDefaultAsync(s => s.Id == id);
+        }
+
+        public async Task<bool> UpdateUserRoleAsync(Stock stock, User user, IdentityRole role)
+        {
+            var userStockRole = await _context.UserStockRoles.FirstOrDefaultAsync(u => 
+                u.Stock == stock && u.User == user);
+
+            if (userStockRole == null)
+            {
+                return false;
+            }
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                if (!await UpdateIdentityRoleAsync(userStockRole.Role.Name!, role!.Name!, user))
+                {
+                    throw new InvalidOperationException();
+                }
+
+                userStockRole.Role = role ?? userStockRole.Role;
+                _context.UserStockRoles.Update(userStockRole);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+                return false;
+            }
+        }
+
+        private async Task<bool> UpdateIdentityRoleAsync(string oldRole, string newRole, User user)
+        {
+            if (await _userManager.IsInRoleAsync(user, oldRole))
+            {
+                var removeResult = await _userManager.RemoveFromRoleAsync(user, oldRole);
+                if (!removeResult.Succeeded)
+                {
+                    return false;
+                }
+            }
+            
+            var addResult = await _userManager.AddToRoleAsync(user, newRole);
+            return addResult.Succeeded;            
         }
     }
 }
