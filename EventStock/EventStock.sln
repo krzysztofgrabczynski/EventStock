@@ -23,6 +23,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{AE5E21DA-7
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventStock.Tests", "EventStock.Tests\EventStock.Tests.csproj", "{84E53D61-B5BA-4F91-BA94-2A798E336FF8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{98696B18-AFFD-499F-B962-9161825EDA62}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "eventstock.frontend", "EventStock.Frontend\eventstock.frontend.esproj", "{A583470E-374D-424E-A884-4B2F43B42517}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +53,12 @@ Global
 		{84E53D61-B5BA-4F91-BA94-2A798E336FF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{84E53D61-B5BA-4F91-BA94-2A798E336FF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{84E53D61-B5BA-4F91-BA94-2A798E336FF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A583470E-374D-424E-A884-4B2F43B42517}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A583470E-374D-424E-A884-4B2F43B42517}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A583470E-374D-424E-A884-4B2F43B42517}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{A583470E-374D-424E-A884-4B2F43B42517}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A583470E-374D-424E-A884-4B2F43B42517}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A583470E-374D-424E-A884-4B2F43B42517}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +69,7 @@ Global
 		{36F44065-C836-4BB4-A54E-CFA5AD4C8A7E} = {4CE65BB5-6CED-4080-A951-5AE1B062452F}
 		{4579F19D-F03C-4087-93AE-02DCD3AEFE1E} = {7C43EE4D-9AA6-4868-B172-78E4148D5C43}
 		{84E53D61-B5BA-4F91-BA94-2A798E336FF8} = {AE5E21DA-713A-4D7A-A2D3-F7A9CD48DC69}
+		{A583470E-374D-424E-A884-4B2F43B42517} = {98696B18-AFFD-499F-B962-9161825EDA62}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C48079E3-C530-41A3-BCA8-65862C9E545D}
