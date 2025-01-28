@@ -22,6 +22,14 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(connectionString));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", policyBuilder =>
+    {
+    policyBuilder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:5174");
+    });
+});
+
 builder.Services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<Context>();
 
@@ -93,7 +101,8 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-} 
+    app.UseCors("CorsPolicy");
+}
 
 app.UseHttpsRedirection();
 
