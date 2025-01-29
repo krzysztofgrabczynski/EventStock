@@ -10,7 +10,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="public\" />
-    <Folder Include="src\Components\" />
+    <Folder Include="src\Components\Navbar\" />
+    <Folder Include="src\Context\" />
+    <Folder Include="src\Pages\LoginPage\" />
+    <Folder Include="src\Pages\HomePage.tsx\" />
+    <Folder Include="src\Pages\RegisterPage\" />
     <Folder Include="src\Routes\" />
   </ItemGroup>
 </Project>
