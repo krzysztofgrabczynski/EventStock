@@ -1,16 +1,13 @@
 import { Link } from "react-router-dom";
+import userIcon from "./userIcon.png";
 
 interface Props { }
 
 const Sidebar = (props: Props) => {
     return (
-        <nav className="fixed top-0 left-0 h-full w-64 bg-white shadow-xl flex flex-col p-6 z-50">
+        <nav className="fixed top-30 left-0 h-full w-64 bg-white shadow-xl flex flex-col p-6 z-50">
             <div className="flex items-center space-x-4 pb-6 border-b">
-                <img
-                    src="https://via.placeholder.com/50"
-                    alt="User Avatar"
-                    className="w-12 h-12 rounded-full"
-                />
+                <img src={userIcon} alt="User icon" className="w-12 h-12 rounded-full"/>
                 <div>
                     <h2 className="text-lg font-bold">John Doe</h2>
                     <p className="text-sm text-gray-500">johndoe@example.com</p>
@@ -32,8 +29,6 @@ const Sidebar = (props: Props) => {
                 </li>
             </ul>
         </nav>
-
-
     );
 };
 
