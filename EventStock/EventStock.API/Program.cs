@@ -26,11 +26,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policyBuilder =>
     {
-    policyBuilder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:5173");
+        policyBuilder.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:5173");
     });
 });
 
-builder.Services.AddIdentity<User, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<Context>();
 
 // Add JWT authentication
