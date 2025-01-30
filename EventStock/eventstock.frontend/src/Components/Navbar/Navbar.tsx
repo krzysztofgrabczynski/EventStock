@@ -5,7 +5,7 @@ import { useAuth } from "../../Context/useAuth";
 interface Props {}
 
 const Navbar = (props: Props) => {
-    const { isLoggedIn, logoutUser } = useAuth();
+    const { isLoggedIn, logoutUser, user } = useAuth();
     return (
         <nav className="relative container mx-auto p-6">
             <div className="flex items-center justify-between">
@@ -16,7 +16,7 @@ const Navbar = (props: Props) => {
                 </div>
                 {isLoggedIn() ? (
                     <div className="hidden lg:flex items-center space-x-6 text-black">
-                        <span className="hover:text-darkBlue">Welcome</span>
+                        <span className="hover:text-darkBlue">Welcome, {user?.firstName}</span>
                         <button
                             onClick={logoutUser}
                             className="px-8 py-3 font-bold rounded text-white bg-blue-500 hover:bg-blue-600 transition"

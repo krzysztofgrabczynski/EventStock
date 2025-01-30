@@ -2,13 +2,15 @@ import axios from "axios";
 import React from "react";
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginAPI, logoutAPI, registerAPI } from "../Api/apiConnetor";
+import { getMyProfileAPI, loginAPI, logoutAPI, registerAPI } from "../Api/apiConnetor";
 import { LoginRequest } from "../Models/Auth/LoginRequest";
 import { RegisterRequest } from "../Models/Auth/RegisterRequest";
+import { UserProfile } from "../Models/User/UserProfile";
 
 type AuthContextType = {
     token: string | null;
     refreshToken: string | null;
+    user: UserProfile | null;
     registerUser: (registerRequest: RegisterRequest) => void;
     loginUser: (loginRequest: LoginRequest) => void;
     logoutUser: () => void;
@@ -23,12 +25,15 @@ export const AuthProvider = ({ children }: Props) => {
     const navigate = useNavigate();
     const [token, setToken] = useState<string | null>(null);
     const [refreshToken, setRefreshToken] = useState<string | null>(null);
+    const [user, setUser] = useState<UserProfile | null>(null);
     const [isReady, setIsReady] = useState(false);
 
     useEffect(() => {
+        const user = localStorage.getItem("user");
         const token = localStorage.getItem("token");
         const refreshToken = localStorage.getItem("refreshToken");
-        if (token && refreshToken) {
+        if (user && token && refreshToken) {
+            setUser(JSON.parse(user));
             setToken(token);
             setRefreshToken(refreshToken);
             axios.defaults.headers.common["Authorization"] = "Bearer " + token;
@@ -42,16 +47,30 @@ export const AuthProvider = ({ children }: Props) => {
     }
 
     const loginUser = async (loginRequest: LoginRequest) => {
-        await loginAPI(loginRequest).then((response) => {
-            if (response) {
-                localStorage.setItem("token", response.data.accessToken);
-                localStorage.setItem("refreshToken", response.data.refreshToken);
+        try {
+            const loginResponse = await loginAPI(loginRequest)
+            const userResponse = await getMyProfileAPI();
+            if (loginResponse && userResponse) {
+                const userObj: UserProfile = {
+                    email: userResponse.data.email,
+                    firstName: userResponse.data.firstName,
+                    lastName: userResponse.data.lastName,
+                };
 
-                setToken(response.data.accessToken);
-                setRefreshToken(response.data.refreshToken);
+                localStorage.setItem("token", loginResponse.data.accessToken);
+                localStorage.setItem("refreshToken", loginResponse.data.refreshToken);
+                localStorage.setItem("user", JSON.stringify(userObj));
+
+                setToken(loginResponse.data.accessToken);
+                setRefreshToken(loginResponse.data.refreshToken);
+                setUser(userObj);
+
                 navigate("/home")
-            }
-        }).catch((e) => console.log("error in login useAuth: ", e));
+            };
+        } catch (error) {
+            console.log("error message: ", error);
+            return error;
+        }
     };
 
     const logoutUser = async () => {
@@ -68,7 +87,7 @@ export const AuthProvider = ({ children }: Props) => {
     }
 
     return (
-        <AuthContext.Provider value={{ token, refreshToken, registerUser, loginUser, logoutUser, isLoggedIn }}>
+        <AuthContext.Provider value={{ token, refreshToken, registerUser, user, loginUser, logoutUser, isLoggedIn }}>
             {isReady ? children : null}
         </AuthContext.Provider>
     );

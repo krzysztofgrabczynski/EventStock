@@ -3,6 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuth } from "../../Context/useAuth";
 import { LoginRequest } from "../../Models/Auth/LoginRequest";
 import { useForm } from "react-hook-form";
+import { getMyProfileAPI } from "../../Api/apiConnetor";
 
 type Props = {};
 
@@ -21,12 +22,12 @@ const LoginPage = (props: Props) => {
 
     const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({ resolver: yupResolver(formValidation) });
 
-    const handleLogin = (form: LoginForm) => {
+    const handleLogin = async (form: LoginForm) => {
         const loginRequest: LoginRequest = {
             email: form.email,
             password: form.password,
         };
-        loginUser(loginRequest);
+        await loginUser(loginRequest);
     }
 
     return (
