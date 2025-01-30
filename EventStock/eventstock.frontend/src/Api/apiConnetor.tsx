@@ -22,6 +22,8 @@ export const registerAPI = async (request: RegisterRequest) => {
     try {
         const data = await axios.post<RegisterResponse>(API_BASE_URL + "Authenticate/Register", {
             email: request.email,
+            firstName: request.firstName,
+            lastName: request.lastName,
             password: request.password,
             confirmPassword: request.confirmPassword,
         });
