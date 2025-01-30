@@ -10,10 +10,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="public\" />
+    <Folder Include="src\Components\UserProfile\" />
+    <Folder Include="src\Components\Sidebar\" />
     <Folder Include="src\Context\" />
     <Folder Include="src\Models\Auth\NewFolder\" />
     <Folder Include="src\Pages\LoginPage\" />
     <Folder Include="src\Pages\HomePage.tsx\" />
+    <Folder Include="src\Pages\PresentationPage\" />
     <Folder Include="src\Pages\RegisterPage\" />
     <Folder Include="src\Routes\" />
   </ItemGroup>

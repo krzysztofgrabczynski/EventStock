@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: Props) => {
 
                 setToken(response.data.accessToken);
                 setRefreshToken(response.data.refreshToken);
-                navigate("/")
+                navigate("/home")
             }
         }).catch((e) => console.log("error in login useAuth: ", e));
     };
