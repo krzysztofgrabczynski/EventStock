@@ -10,8 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="public\" />
-    <Folder Include="src\Components\Navbar\" />
     <Folder Include="src\Context\" />
+    <Folder Include="src\Models\Auth\NewFolder\" />
     <Folder Include="src\Pages\LoginPage\" />
     <Folder Include="src\Pages\HomePage.tsx\" />
     <Folder Include="src\Pages\RegisterPage\" />
