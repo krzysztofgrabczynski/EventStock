@@ -46,10 +46,19 @@ export const logoutAPI = async (refreshToken: string) => {
     }
 }
 
-export const getMyProfileAPI = async () => {
+export const getMyProfileAPI = async (accessToken: string | null = null) => {
     try {
-        const data = await axios.get<UserProfile>(API_BASE_URL + "User/my-profile");
-        return data
+        if (!accessToken) {
+            const data = await axios.get<UserProfile>(API_BASE_URL + "User/my-profile");
+            return data;
+        } else {
+            const data = await axios.get<UserProfile>(API_BASE_URL + "User/my-profile", {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+            return data;
+        }
     } catch (error) {
         console.log("error message: ", error);
         return error;

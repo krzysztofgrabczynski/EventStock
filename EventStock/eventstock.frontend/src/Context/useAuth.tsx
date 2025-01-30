@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }: Props) => {
     const loginUser = async (loginRequest: LoginRequest) => {
         try {
             const loginResponse = await loginAPI(loginRequest)
-            const userResponse = await getMyProfileAPI();
+            const userResponse = await getMyProfileAPI(loginResponse.data.accessToken);
             if (loginResponse && userResponse) {
                 const userObj: UserProfile = {
                     email: userResponse.data.email,
@@ -77,8 +77,10 @@ export const AuthProvider = ({ children }: Props) => {
         await logoutAPI(refreshToken!);
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
         setToken(null);
         setRefreshToken(null);
+        setUser(null);
         navigate("/login");
     }
 
