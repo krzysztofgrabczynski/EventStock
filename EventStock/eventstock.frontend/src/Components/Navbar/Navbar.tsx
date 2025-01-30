@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import logo from "./logo.svg";
 import { useAuth } from "../../Context/useAuth";
 
 interface Props {}
@@ -8,34 +9,29 @@ const Navbar = (props: Props) => {
     return (
         <nav className="relative container mx-auto p-6">
             <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-20">
+                <div className="flex items-center space-x-10">
                     <Link to="/">
-                        <img alt="logo" />
+                        <img src={logo} alt="logo" className="h-10" />
                     </Link>
-                    <div className="hidden font-bold lg:flex">
-                        <Link to="/" className="text-black hover:text-darkBlue">
-                            Search
-                        </Link>
-                    </div>
                 </div>
                 {isLoggedIn() ? (
-                    <div className="hidden lg:flex items-center space-x-6 text-back">
-                        <div className="hover:text-darkBlue">Welcome</div>
-                        <a
+                    <div className="hidden lg:flex items-center space-x-6 text-black">
+                        <span className="hover:text-darkBlue">Welcome</span>
+                        <button
                             onClick={logoutUser}
-                            className="px-8 py-3 font-bold rounded text-white bg-lightGreen hover:opacity-70"
+                            className="px-8 py-3 font-bold rounded text-white bg-blue-500 hover:bg-blue-600 transition"
                         >
                             Logout
-                        </a>
+                        </button>
                     </div>
                 ) : (
-                    <div className="hidden lg:flex items-center space-x-6 text-back">
-                        <Link to="/login" className="hover:text-darkBlue">
+                    <div className="hidden lg:flex items-center space-x-6 text-black">
+                        <Link to="/login" className="hover:text-darkBlue text-lg font-medium">
                             Login
                         </Link>
                         <Link
                             to="/register"
-                            className="px-8 py-3 font-bold rounded text-white bg-lightGreen hover:opacity-70"
+                            className="px-8 py-3 font-bold rounded text-white bg-blue-500 hover:bg-blue-600 transition"
                         >
                             Signup
                         </Link>
