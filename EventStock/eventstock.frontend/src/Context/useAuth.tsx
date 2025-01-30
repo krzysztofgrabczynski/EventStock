@@ -11,7 +11,7 @@ type AuthContextType = {
     refreshToken: string | null;
     registerUser: (registerRequest: RegisterRequest) => void;
     loginUser: (loginRequest: LoginRequest) => void;
-    logoutUser: (refreshToken: string) => void;
+    logoutUser: () => void;
     isLoggedIn: () => boolean;
 };
 
@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }: Props) => {
     }, []);
 
     const registerUser = async (registerRequest: RegisterRequest) => {
-        const response = await registerAPI(registerRequest);
+        await registerAPI(registerRequest);
         navigate("/login");
     }
 
@@ -54,8 +54,8 @@ export const AuthProvider = ({ children }: Props) => {
         }).catch((e) => console.log("error in login useAuth: ", e));
     };
 
-    const logoutUser = async (refreshToken: string) => {
-        await logoutAPI(refreshToken);
+    const logoutUser = async () => {
+        await logoutAPI(refreshToken!);
         localStorage.removeItem("token");
         localStorage.removeItem("refreshToken");
         setToken(null);
