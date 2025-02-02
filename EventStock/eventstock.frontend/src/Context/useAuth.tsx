@@ -2,7 +2,7 @@ import axios from "axios";
 import React from "react";
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginAPI, logoutAPI, registerAPI } from "../Api/apiConnetor";
+import { loginAPI, logoutAPI, registerAPI } from "../Api/apiAuth";
 import { LoginRequest } from "../Models/Auth/LoginRequest";
 import { RegisterRequest } from "../Models/Auth/RegisterRequest";
 import { UserProfile } from "../Models/User/UserProfile";
