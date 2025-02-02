@@ -4,7 +4,6 @@ import { LoginRequest } from "../Models/Auth/LoginRequest";
 import { LoginResponse } from "../Models/Auth/LoginResponse";
 import { RegisterRequest } from "../Models/Auth/RegisterRequest";
 import { RegisterResponse } from "../Models/Auth/RegisterResponse";
-import { UserProfile } from "../Models/User/UserProfile";
 
 export const loginAPI = async (request: LoginRequest) => {
     try {
@@ -40,25 +39,6 @@ export const logoutAPI = async (refreshToken: string) => {
         await axios.post<void>(API_BASE_URL + "Authenticate/logout", {
             refreshToken: refreshToken,
         });
-    } catch (error) {
-        console.log("error message: ", error);
-        return error;
-    }
-}
-
-export const getMyProfileAPI = async (accessToken: string | null = null) => {
-    try {
-        if (!accessToken) {
-            const data = await axios.get<UserProfile>(API_BASE_URL + "User/my-profile");
-            return data;
-        } else {
-            const data = await axios.get<UserProfile>(API_BASE_URL + "User/my-profile", {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`
-                }
-            });
-            return data;
-        }
     } catch (error) {
         console.log("error message: ", error);
         return error;

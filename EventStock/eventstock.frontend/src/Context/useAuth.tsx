@@ -2,11 +2,11 @@ import axios from "axios";
 import React from "react";
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getMyProfileAPI, loginAPI, logoutAPI, registerAPI } from "../Api/apiConnetor";
+import { loginAPI, logoutAPI, registerAPI } from "../Api/apiConnetor";
 import { LoginRequest } from "../Models/Auth/LoginRequest";
 import { RegisterRequest } from "../Models/Auth/RegisterRequest";
 import { UserProfile } from "../Models/User/UserProfile";
-import { updateMyProfileAPI } from "../Api/apiUser";
+import { getMyProfileAPI, updateMyProfileAPI } from "../Api/apiUser";
 
 type AuthContextType = {
     token: string | null;
