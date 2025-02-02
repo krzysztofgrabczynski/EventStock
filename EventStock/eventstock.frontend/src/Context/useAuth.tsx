@@ -6,11 +6,13 @@ import { getMyProfileAPI, loginAPI, logoutAPI, registerAPI } from "../Api/apiCon
 import { LoginRequest } from "../Models/Auth/LoginRequest";
 import { RegisterRequest } from "../Models/Auth/RegisterRequest";
 import { UserProfile } from "../Models/User/UserProfile";
+import { updateMyProfileAPI } from "../Api/apiUser";
 
 type AuthContextType = {
     token: string | null;
     refreshToken: string | null;
     user: UserProfile | null;
+    updateUser: (updatedUser: UserProfile) => void;
     registerUser: (registerRequest: RegisterRequest) => void;
     loginUser: (loginRequest: LoginRequest) => void;
     logoutUser: () => void;
@@ -88,8 +90,14 @@ export const AuthProvider = ({ children }: Props) => {
         return !!token;
     }
 
+    const updateUser = async (updatedUser: UserProfile) => {
+        await updateMyProfileAPI(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setUser(updatedUser);
+    }
+
     return (
-        <AuthContext.Provider value={{ token, refreshToken, registerUser, user, loginUser, logoutUser, isLoggedIn }}>
+        <AuthContext.Provider value={{ token, refreshToken, registerUser, user, updateUser, loginUser, logoutUser, isLoggedIn }}>
             {isReady ? children : null}
         </AuthContext.Provider>
     );
