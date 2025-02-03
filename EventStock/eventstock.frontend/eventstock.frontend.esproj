@@ -19,6 +19,5 @@
     <Folder Include="src\Pages\HomePage.tsx\" />
     <Folder Include="src\Pages\PresentationPage\" />
     <Folder Include="src\Pages\RegisterPage\" />
-    <Folder Include="src\Routes\" />
   </ItemGroup>
 </Project>

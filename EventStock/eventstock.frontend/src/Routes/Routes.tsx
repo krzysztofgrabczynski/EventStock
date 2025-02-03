@@ -6,6 +6,7 @@ import HomePage from "../Pages/HomePage.tsx/HomePage";
 import UserProfile from "../Components/UserProfile/UserProfile";
 import PresentationPage from "../Pages/PresentationPage/PresentationPage";
 import UserStocks from "../Components/UserStocks/UserStocks";
+import ProtectedRoute from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
     {
@@ -16,7 +17,13 @@ export const router = createBrowserRouter([
             { path: "login", element: <LoginPage /> },
             { path: "register", element: <RegisterPage /> },
             {
-                path: "home", element: <HomePage />, children: [
+                path: "home",
+                element: (
+                    <ProtectedRoute>
+                        <HomePage />
+                    </ProtectedRoute>
+                ),
+                children: [
                     { path: "profile", element: <UserProfile /> },
                     { path: "stocks", element: <UserStocks /> },
                 ],
