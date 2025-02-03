@@ -49,3 +49,13 @@ export const changeMyPasswordAPI = async (request: UserPasswordUpdate) => {
         return error;
     }
 }
+
+export const myStockListAPI = async () => {
+    try {
+        const data = axios.get<void>(API_BASE_URL + "User/my-stocks-list");
+        return data;
+    } catch (error) {
+        console.log("error message: ", error);
+        return error;
+    }
+}

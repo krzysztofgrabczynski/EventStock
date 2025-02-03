@@ -5,6 +5,7 @@ import RegisterPage from "../Pages/RegisterPage/RegisterPage";
 import HomePage from "../Pages/HomePage.tsx/HomePage";
 import UserProfile from "../Components/UserProfile/UserProfile";
 import PresentationPage from "../Pages/PresentationPage/PresentationPage";
+import UserStocks from "../Components/UserStocks/UserStocks";
 
 export const router = createBrowserRouter([
     {
@@ -17,7 +18,7 @@ export const router = createBrowserRouter([
             {
                 path: "home", element: <HomePage />, children: [
                     { path: "profile", element: <UserProfile /> },
-
+                    { path: "stocks", element: <UserStocks /> },
                 ],
             },
         ],

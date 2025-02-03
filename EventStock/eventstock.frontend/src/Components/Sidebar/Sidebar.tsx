@@ -24,7 +24,10 @@ const Sidebar = (props: Props) => {
                     </Link>
                 </li>
                 <li>
-                    <a href="#" className="block text-lg font-medium text-gray-700 hover:text-blue-500">Settings</a>
+                    <Link
+                        to="stocks">
+                        <a href="#" className="block text-lg font-medium text-gray-700 hover:text-blue-500">Stocks</a>
+                    </Link>
                 </li>
                 <li>
                     <a href="#" className="block text-lg font-medium text-gray-700 hover:text-blue-500">Logout</a>

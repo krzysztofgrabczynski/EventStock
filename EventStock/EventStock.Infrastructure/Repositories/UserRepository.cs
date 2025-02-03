@@ -15,7 +15,10 @@ namespace EventStock.Infrastructure.Repositories
 
         public async Task<List<Stock>> ListUsersStocksAsync(string userId)
         {
-            return await _context.Stocks.Where(s => s.Users.Any(u => u.Id == userId)).ToListAsync();
+            return await _context.Stocks
+                .Include(s => s.Address)
+                .Where(s => s.Users.Any(u => u.Id == userId))
+                .ToListAsync();
         }
     }
 }
