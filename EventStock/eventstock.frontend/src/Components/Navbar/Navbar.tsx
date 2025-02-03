@@ -13,7 +13,18 @@ const Navbar = (props: Props) => {
                     <Link to="/">
                         <img src={logo} alt="logo" className="h-10" />
                     </Link>
+
+                    {/* Jeœli u¿ytkownik jest zalogowany, poka¿ przycisk "Home" */}
+                    {isLoggedIn() && (
+                        <Link
+                            to="/home"
+                            className="px-4 py-2 font-medium text-white bg-blue-500 rounded hover:bg-blue-600 transition"
+                        >
+                            Home
+                        </Link>
+                    )}
                 </div>
+
                 {isLoggedIn() ? (
                     <div className="hidden lg:flex items-center space-x-6 text-black">
                         <span className="hover:text-darkBlue">Welcome, {user?.firstName}</span>
@@ -39,6 +50,7 @@ const Navbar = (props: Props) => {
                 )}
             </div>
         </nav>
+
     );
 };
 
