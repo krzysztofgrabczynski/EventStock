@@ -30,7 +30,7 @@ const Sidebar = (props: Props) => {
                     </Link>
                 </li>
                 <li>
-                    <a href="#" className="block text-lg font-medium text-gray-700 hover:text-blue-500">Logout</a>
+                    <a href="#" className="block text-lg font-medium text-gray-700 hover:text-blue-500">Settings</a>
                 </li>
             </ul>
         </nav>
