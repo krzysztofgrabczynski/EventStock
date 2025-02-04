@@ -39,7 +39,7 @@ namespace EventStock.Application.Services
             var stock = await _stockRepository.GetStockAsync(stockId);
             var user = await _userManager.FindByIdAsync(userId);
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsUserStockAdmin");
             if (!authorizationResult.Succeeded)
             {
                 return Result.Failure(new PermissionDeniedResultError());
@@ -74,7 +74,7 @@ namespace EventStock.Application.Services
             var stock = await _stockRepository.GetStockAsync(stockId);
             var user = await _userManager.FindByIdAsync(userId);
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsUserStockAdmin");
             if (!authorizationResult.Succeeded)
             {
                 return Result.Failure(new PermissionDeniedResultError());
@@ -106,6 +106,12 @@ namespace EventStock.Application.Services
 
         public async Task<Result<int>> CreateStockAsync(CreateStockDto stock)
         {
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, "IsUserAdmin");
+            if (!authorizationResult.Succeeded)
+            {
+                return Result<int>.Failure(new PermissionDeniedResultError());
+            }
+
             var mappedStock = _mapper.Map<Stock>(stock);
             var id = await _stockRepository.CreateStockAsync(mappedStock);
             if (id == null)
@@ -124,7 +130,7 @@ namespace EventStock.Application.Services
                 return Result.Failure(new StockDoesNotExistResultError());
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsUserStockAdmin");
             if (!authorizationResult.Succeeded)
             {
                 return Result.Failure(new PermissionDeniedResultError());
@@ -148,7 +154,7 @@ namespace EventStock.Application.Services
                 return Result.Failure(new UserNotExistInStockResultError());
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsUserStockAdmin");
             if (!authorizationResult.Succeeded)
             {
                 return Result.Failure(new PermissionDeniedResultError());
@@ -220,7 +226,7 @@ namespace EventStock.Application.Services
                 return Result.Failure(new StockDoesNotExistResultError()); 
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsUserStockAdmin");
             if (!authorizationResult.Succeeded)
             {
                 return Result.Failure(new PermissionDeniedResultError());

@@ -52,12 +52,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization(options =>
 {
+    options.AddPolicy("IsUserAdmin", policy => policy.Requirements.Add(new IsUserAdminRequirement()));
     options.AddPolicy("IsStockUser", policy => policy.Requirements.Add(new IsStockUserRequirement()));
+    options.AddPolicy("IsUserStockAdmin", policy => policy.Requirements.Add(new IsStockUserRequirement(requiredRole: "StockAdmin")));
 });
 
 // DI
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-builder.Services.AddSingleton<IAuthorizationHandler, IsStockUserHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, IsStockUserHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, IsUserAdminHandler>();
 builder.Services.AddTransient<ITokenManagementService, TokenManagementService>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
