@@ -10,6 +10,8 @@ using EventStock.Domain.Interfaces;
 using System.Security.Cryptography;
 using EventStock.Application.Dto.Token;
 using EventStock.Application.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using System.Data;
 
 namespace EventStock.Application.Services
 {
@@ -17,13 +19,15 @@ namespace EventStock.Application.Services
     {
         private readonly IConfiguration _configuration;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
-        public TokenManagementService(IConfiguration configuration, IRefreshTokenRepository refreshTokenRepository)
+        private readonly UserManager<User> _userManager;
+        public TokenManagementService(IConfiguration configuration, IRefreshTokenRepository refreshTokenRepository, UserManager<User> userManager)
         {
             _configuration = configuration;
             _refreshTokenRepository = refreshTokenRepository;
+            _userManager = userManager;
         }
 
-        private string GenerateJWT(string userId)
+        private string GenerateJWT(string userId, IList<string> roles)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
@@ -33,6 +37,11 @@ namespace EventStock.Application.Services
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Sub, userId)
             };
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
             var tokenDescription = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
@@ -71,19 +80,23 @@ namespace EventStock.Application.Services
             return Convert.ToBase64String(sha256.ComputeHash(bytes));
         }
 
-        public async Task<Result<TokensResultDto>> GenerateTokensAsync(string userId)
+        public async Task<Result<TokensResultDto>> GenerateTokensAsync(User user)
         {
-            var newRefreshToken = await GenerateRefreshTokenAsync(userId);
-            var newJwtToken = GenerateJWT(userId);
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var newRefreshToken = await GenerateRefreshTokenAsync(user.Id);
+            var newJwtToken = GenerateJWT(user.Id, userRoles);
             var result = new TokensResultDto(newJwtToken, newRefreshToken);
 
             return Result<TokensResultDto>.Success(result);
         }
 
-        public async Task<Result<TokensResultDto>> GenerateTokensAsync(RefreshToken refreshToken, string userID)
+        public async Task<Result<TokensResultDto>> GenerateTokensAsync(RefreshToken refreshToken, User user)
         {
+            var userRoles = await _userManager.GetRolesAsync(user);
+
             var newRefreshToken = await UpdateRefreshTokenAsync(refreshToken);
-            var newJwtToken = GenerateJWT(userID);
+            var newJwtToken = GenerateJWT(user.Id, userRoles);
             var result = new TokensResultDto(newJwtToken, newRefreshToken);
 
             return Result<TokensResultDto>.Success(result);

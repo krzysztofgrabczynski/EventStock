@@ -5,7 +5,6 @@ namespace EventStock.Infrastructure.Repositories
 {
     public interface IStockRepository
     {
-        Task<int?> CreateStockAsync(Stock stock);
         Task DeleteStockAsync(Stock stock);
         Task<Stock?> GetStockAsync(int id);
         Task UpdateStockAsync(Stock stock);

@@ -40,14 +40,25 @@ namespace EventStock.Application.Services
             return Result<UserDto>.Success(mappedUser);
         }
 
-        public async Task<Result<string>> GetUserIdByEmailAsync(string email)
+        public async Task<Result<User>> GetUserModelAsync(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return Result<User>.Failure(new UserNotFoundResultError());
+            }
+
+            return Result<User>.Success(user);
+        }
+
+        public async Task<Result<User>> GetUserByEmailAsync(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
-                return Result<string>.Failure(new UserWithEmailNotFoundResultError());
+                return Result<User>.Failure(new UserWithEmailNotFoundResultError());
             }
-            return Result<string>.Success(user.Id);
+            return Result<User>.Success(user);
         }
 
         public async Task<IdentityResult> UpdateUserAsync(string id, UserDto updatedUser)

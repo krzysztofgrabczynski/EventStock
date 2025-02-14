@@ -10,15 +10,7 @@ namespace EventStock.Application.Authorization
         {
             var userId = context.User.FindFirstValue(ClaimTypes.NameIdentifier);
             
-            if (requirement.RequiredRole != string.Empty)
-            {
-                if (!resource.UserStockRoles.Any(usr => usr.User.Id == userId && usr.Role.Name == requirement.RequiredRole))
-                {
-                    context.Fail();
-                    return Task.CompletedTask;
-                }
-            }
-            else if (!resource.UserStockRoles.Any(usr => usr.User.Id == userId))
+            if (!resource.Users.Any(usr => usr.Id == userId))
             {
                 context.Fail();
                 return Task.CompletedTask;

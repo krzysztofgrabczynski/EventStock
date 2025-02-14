@@ -6,8 +6,8 @@ namespace EventStock.Application.Interfaces
 {
     public interface ITokenManagementService
     {
-        Task<Result<TokensResultDto>> GenerateTokensAsync(string userId);
-        Task<Result<TokensResultDto>> GenerateTokensAsync(RefreshToken refreshToken, string userId);
+        Task<Result<TokensResultDto>> GenerateTokensAsync(User user);
+        Task<Result<TokensResultDto>> GenerateTokensAsync(RefreshToken refreshToken, User user);
         Task<Result<RefreshToken>> GetRefreshTokenAsync(string refreshToken, bool needHash);
         Result CheckRefreshTokenExpiration(RefreshToken tokneFromDB);
         Task DeleteRefreshTokenAsync(string refreshToken, bool needHash);

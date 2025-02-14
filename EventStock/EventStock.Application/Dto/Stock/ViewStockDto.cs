@@ -8,7 +8,6 @@ namespace EventStock.Application.Dto.Stock
     {
         public required string Name { get; set; }
         public Address? Address { get; set; }
-        public ICollection<UserWithRoleDto> Users { get; set; } = new List<UserWithRoleDto>();
 
         public void Mapping(Profile profile)
         {

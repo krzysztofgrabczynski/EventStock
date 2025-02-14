@@ -9,7 +9,6 @@ namespace EventStock.Application.Interfaces
 {
     public interface IStockService
     {
-        Task<Result<int>> CreateStockAsync(CreateStockDto stock);
         Task<Result<ViewStockDto>> GetStockAsync(int id);
         Task<Result> UpdateStockAsync(int id, ViewStockDtoForList stockDto);
         Task<Result> DeleteStockAsync(int id);

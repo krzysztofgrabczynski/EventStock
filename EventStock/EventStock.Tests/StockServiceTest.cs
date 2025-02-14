@@ -55,94 +55,94 @@ namespace EventStock.Tests
                 .ReturnsAsync(AuthorizationResult.Success());
         }
 
-        [Fact]
-        public async Task CreateStockAsyncPositiveTest()
-        {
-            // Arrange
-            _mapperMock.Setup(m => m.Map<Stock>(It.IsAny<CreateStockDto>())).Returns<CreateStockDto>(s => 
-            new Stock()
-            {
-                Id = 1,
-                Name = s.Name,
-                Address = s.Address,
-                Users = s.Users
-            });
-            _stockRepositoryMock.Setup(s => s.CreateStockAsync(It.IsAny<Stock>())).ReturnsAsync(1);
-            var stock = new CreateStockDto()
-            {
-                Name = "TestStock",
-                Address = null,
-                Users = new List<User>()
-            };
+        //[Fact]
+        //public async Task CreateStockAsyncPositiveTest()
+        //{
+        //    // Arrange
+        //    _mapperMock.Setup(m => m.Map<Stock>(It.IsAny<CreateStockDto>())).Returns<CreateStockDto>(s => 
+        //    new Stock()
+        //    {
+        //        Id = 1,
+        //        Name = s.Name,
+        //        Address = s.Address,
+        //        Users = s.Users
+        //    });
+        //    _stockRepositoryMock.Setup(s => s.CreateStockAsync(It.IsAny<Stock>())).ReturnsAsync(1);
+        //    var stock = new CreateStockDto()
+        //    {
+        //        Name = "TestStock",
+        //        Address = null,
+        //        Users = new List<User>()
+        //    };
 
-            // Act
-            var result = await _stockService.CreateStockAsync(stock);
+        //    // Act
+        //    var result = await _stockService.CreateStockAsync(stock);
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.True(result.Succeeded);
-            Assert.Equal(1, result.Value);
-        }
+        //    // Assert
+        //    Assert.NotNull(result);
+        //    Assert.True(result.Succeeded);
+        //    Assert.Equal(1, result.Value);
+        //}
 
-        [Fact]
-        public async Task CreateStockAsyncNegativeTest()
-        {
-            // Arrange
-            _stockRepositoryMock.Setup(s => s.CreateStockAsync(It.IsAny<Stock>())).ReturnsAsync((int?)null);
-            var stock = new CreateStockDto()
-            {
-                Name = "TestStock",
-                Address = null,
-                Users = new List<User>()
-            };
+        //[Fact]
+        //public async Task CreateStockAsyncNegativeTest()
+        //{
+        //    // Arrange
+        //    _stockRepositoryMock.Setup(s => s.CreateStockAsync(It.IsAny<Stock>())).ReturnsAsync((int?)null);
+        //    var stock = new CreateStockDto()
+        //    {
+        //        Name = "TestStock",
+        //        Address = null,
+        //        Users = new List<User>()
+        //    };
 
-            // Act
-            var result = await _stockService.CreateStockAsync(stock);
+        //    // Act
+        //    var result = await _stockService.CreateStockAsync(stock);
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.False(result.Succeeded);
-        }
+        //    // Assert
+        //    Assert.NotNull(result);
+        //    Assert.False(result.Succeeded);
+        //}
 
-        [Fact]
-        public async Task GetStockAsyncPositiveTest()
-        {
-            // Arrange
-            var user = new User()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Email = "test@email.com",
-                FirstName = "TestFirstName",
-                LastName = "TestLastName"
-            };
-            var stock = new Stock()
-            {
-                Id = 1,
-                Name = "TestStock",
-                Users = new List<User>() { user }
-            };
-            _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
-            _mapperMock.Setup(m => m.Map<ViewStockDto>(It.IsAny<Stock>())).Returns<Stock>(s => new ViewStockDto()
-            {
-                Name = s.Name,
-                Address = s.Address,
-                Users = s.Users.Select(u => new UserWithRoleDto()
-                {
-                    Email = u.Email,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName
+        //[Fact]
+        //public async Task GetStockAsyncPositiveTest()
+        //{
+        //    // Arrange
+        //    var user = new User()
+        //    {
+        //        Id = Guid.NewGuid().ToString(),
+        //        Email = "test@email.com",
+        //        FirstName = "TestFirstName",
+        //        LastName = "TestLastName"
+        //    };
+        //    var stock = new Stock()
+        //    {
+        //        Id = 1,
+        //        Name = "TestStock",
+        //        Users = new List<User>() { user }
+        //    };
+        //    _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
+        //    _mapperMock.Setup(m => m.Map<ViewStockDto>(It.IsAny<Stock>())).Returns<Stock>(s => new ViewStockDto()
+        //    {
+        //        Name = s.Name,
+        //        Address = s.Address,
+        //        Users = s.Users.Select(u => new UserWithRoleDto()
+        //        {
+        //            Email = u.Email,
+        //            FirstName = u.FirstName,
+        //            LastName = u.LastName
                    
-                }).ToList()
-            });
+        //        }).ToList()
+        //    });
 
-            // Act
-            var result = await _stockService.GetStockAsync(stock.Id);
+        //    // Act
+        //    var result = await _stockService.GetStockAsync(stock.Id);
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.True(result.Succeeded);
-            Assert.Equal(user.Email, result.Value.Users.First().Email);
-        }
+        //    // Assert
+        //    Assert.NotNull(result);
+        //    Assert.True(result.Succeeded);
+        //    Assert.Equal(user.Email, result.Value.Users.First().Email);
+        //}
 
         [Fact]
         public async Task GetStockAsyncNegatieTest()

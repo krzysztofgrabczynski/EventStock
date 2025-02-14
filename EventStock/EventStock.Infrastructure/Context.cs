@@ -6,7 +6,6 @@ namespace EventStock.Infrastructure
 {
     public class Context : IdentityDbContext<User>
     {
-        public DbSet<UserStockRole> UserStockRoles { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<Equipment> Equipments { get; set; }

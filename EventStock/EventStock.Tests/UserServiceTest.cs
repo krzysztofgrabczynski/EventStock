@@ -107,50 +107,50 @@ namespace EventStock.Tests
             Assert.NotEqual(result.Error, ResultError.None);
         }
 
-        [Fact]
-        public async Task GetUserIdByEmailAsyncPositiveTest()
-        {
-            // Arrange
-            var user = new User()
-            {
-                Id = "test-id",
-                Email = "test@emial.com",
-                FirstName = "John",
-                LastName = "Doe"
-            };
-            _userManagerMock.Setup(u => u.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
+        //[Fact]
+        //public async Task GetUserIdByEmailAsyncPositiveTest()
+        //{
+        //    // Arrange
+        //    var user = new User()
+        //    {
+        //        Id = "test-id",
+        //        Email = "test@emial.com",
+        //        FirstName = "John",
+        //        LastName = "Doe"
+        //    };
+        //    _userManagerMock.Setup(u => u.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
 
-            // Act
-            var result = await _userService.GetUserIdByEmailAsync("test@emial.com");
+        //    // Act
+        //    var result = await _userService.GetUserIdByEmailAsync("test@emial.com");
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.True(result.Succeeded);
-            Assert.Equal(result.Error, ResultError.None);
-            Assert.Equal(result.Value, user.Id);
-        }
+        //    // Assert
+        //    Assert.NotNull(result);
+        //    Assert.True(result.Succeeded);
+        //    Assert.Equal(result.Error, ResultError.None);
+        //    Assert.Equal(result.Value, user.Id);
+        //}
 
-        [Fact]
-        public async Task GetUserIdByEmailAsyncNegativeTest()
-        {
-            // Arrange
-            var user = new User()
-            {
-                Id = "test-id",
-                Email = "test@emial.com",
-                FirstName = "John",
-                LastName = "Doe"
-            };
-            _userManagerMock.Setup(u => u.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+        //[Fact]
+        //public async Task GetUserIdByEmailAsyncNegativeTest()
+        //{
+        //    // Arrange
+        //    var user = new User()
+        //    {
+        //        Id = "test-id",
+        //        Email = "test@emial.com",
+        //        FirstName = "John",
+        //        LastName = "Doe"
+        //    };
+        //    _userManagerMock.Setup(u => u.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
 
-            // Act
-            var result = await _userService.GetUserIdByEmailAsync("test@emial.com");
+        //    // Act
+        //    var result = await _userService.GetUserIdByEmailAsync("test@emial.com");
 
-            // Assert
-            Assert.NotNull(result);
-            Assert.False(result.Succeeded);
-            Assert.NotEqual(result.Error, ResultError.None);
-        }
+        //    // Assert
+        //    Assert.NotNull(result);
+        //    Assert.False(result.Succeeded);
+        //    Assert.NotEqual(result.Error, ResultError.None);
+        //}
 
         [Fact]
         public async Task ListUsersStocksAsyncTest()

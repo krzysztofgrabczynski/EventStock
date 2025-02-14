@@ -18,18 +18,6 @@ namespace EventStock.API.Controllers
             _stockService = stockService;
         }
 
-        [HttpPost("create-stock")]
-        public async Task<IActionResult> CreateStock([FromBody] CreateStockDto stockDto)
-        {
-            var result = await _stockService.CreateStockAsync(stockDto);
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Error);
-            }
-
-            return Ok(result.Value);
-        }
-
         [HttpGet("get-stock/{id}")]
         public async Task<IActionResult> GetStock(int id)
         {
@@ -43,6 +31,7 @@ namespace EventStock.API.Controllers
         }
 
         [HttpPut("update-stock/{id}")]
+        [Authorize(Policy = "StockModeratorPolicy")]
         public async Task<IActionResult> UpdateStock(int id, [FromBody] ViewStockDtoForList stockDto)
         {
             var result = await _stockService.UpdateStockAsync(id, stockDto);
@@ -56,6 +45,7 @@ namespace EventStock.API.Controllers
 
 
         [HttpDelete("delete-stock/{id}")]
+        [Authorize(Policy = "StockAdminPolicy")]
         public async Task<IActionResult> DeleteStock(int id)
         {
             var result = await _stockService.DeleteStockAsync(id);
@@ -68,6 +58,7 @@ namespace EventStock.API.Controllers
         }
 
         [HttpPost("add-user")]
+        [Authorize(Policy = "StockModeratorPolicy")]
         public async Task<IActionResult> AddUserToStock([FromBody] AddUserToStockDto request)
         {
             if (!Enum.IsDefined(typeof(Role), request.Role))
@@ -85,6 +76,7 @@ namespace EventStock.API.Controllers
         }
 
         [HttpPut("update-user-role")]
+        [Authorize(Policy = "StockModeratorPolicy")]
         public async Task<IActionResult> UpdateUserRoleInStock([FromBody] AddUserToStockDto request)
         {
             if (!Enum.IsDefined(typeof(Role), request.Role))
@@ -102,6 +94,7 @@ namespace EventStock.API.Controllers
         }
 
         [HttpDelete("delete-user")]
+        [Authorize(Policy = "StockModeratorPolicy")]
         public async Task<IActionResult> DeleteUserFromStock([FromBody] DeleteUserFromStockDto request)
         {
             var result = await _stockService.DeleteUserAsync(request.StockId, request.UserId);

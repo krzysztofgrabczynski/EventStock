@@ -39,7 +39,7 @@ namespace EventStock.Application.Services
             var stock = await _stockRepository.GetStockAsync(stockId);
             var user = await _userManager.FindByIdAsync(userId);
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsUserStockAdmin");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
             if (!authorizationResult.Succeeded)
             {
                 return Result.Failure(new PermissionDeniedResultError());
@@ -74,7 +74,7 @@ namespace EventStock.Application.Services
             var stock = await _stockRepository.GetStockAsync(stockId);
             var user = await _userManager.FindByIdAsync(userId);
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsUserStockAdmin");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
             if (!authorizationResult.Succeeded)
             {
                 return Result.Failure(new PermissionDeniedResultError());
@@ -104,24 +104,6 @@ namespace EventStock.Application.Services
             return Result.Success();
         }
 
-        public async Task<Result<int>> CreateStockAsync(CreateStockDto stock)
-        {
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, "IsUserAdmin");
-            if (!authorizationResult.Succeeded)
-            {
-                return Result<int>.Failure(new PermissionDeniedResultError());
-            }
-
-            var mappedStock = _mapper.Map<Stock>(stock);
-            var id = await _stockRepository.CreateStockAsync(mappedStock);
-            if (id == null)
-            {
-                return Result<int>.Failure(new StockSavingResultError());
-            }
-            
-            return Result<int>.Success(id.Value); 
-        }
-
         public async Task<Result> DeleteStockAsync(int stockId)
         {
             var stock = await _stockRepository.GetStockAsync(stockId);
@@ -130,7 +112,7 @@ namespace EventStock.Application.Services
                 return Result.Failure(new StockDoesNotExistResultError());
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsUserStockAdmin");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
             if (!authorizationResult.Succeeded)
             {
                 return Result.Failure(new PermissionDeniedResultError());
@@ -154,7 +136,7 @@ namespace EventStock.Application.Services
                 return Result.Failure(new UserNotExistInStockResultError());
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsUserStockAdmin");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
             if (!authorizationResult.Succeeded)
             {
                 return Result.Failure(new PermissionDeniedResultError());
@@ -179,15 +161,6 @@ namespace EventStock.Application.Services
             }
 
             var mappedStock = _mapper.Map<ViewStockDto>(result);
-
-            foreach (var user in mappedStock.Users)
-            {
-                var userRole = result.UserStockRoles
-                    .Where(u => u.User.Email == user.Email)
-                    .Select(u => u.Id)
-                    .FirstOrDefault();
-                user.Role = userRole;
-            }
 
             return Result<ViewStockDto>.Success(mappedStock);
         }
@@ -226,7 +199,7 @@ namespace EventStock.Application.Services
                 return Result.Failure(new StockDoesNotExistResultError()); 
             }
 
-            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsUserStockAdmin");
+            var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
             if (!authorizationResult.Succeeded)
             {
                 return Result.Failure(new PermissionDeniedResultError());

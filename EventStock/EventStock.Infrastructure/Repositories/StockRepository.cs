@@ -22,14 +22,6 @@ namespace EventStock.Infrastructure.Repositories
             {
                 await _userManager.AddToRoleAsync(user, role.Name!);
                 stock.Users.Add(user);
-                var userStockRole = new UserStockRole()
-                {
-                    User = user,
-                    Stock = stock,
-                    Role = role
-                };
-                await _context.UserStockRoles.AddAsync(userStockRole);
-
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();
@@ -41,17 +33,6 @@ namespace EventStock.Infrastructure.Repositories
                 await transaction.RollbackAsync();
                 return false;
             }
-        }
-
-        public async Task<int?> CreateStockAsync(Stock stock)
-        {
-            await _context.Stocks.AddAsync(stock);
-            var result = await _context.SaveChangesAsync();
-            if (result > 0)
-            {   
-                return stock.Id;
-            }
-            return null;
         }
 
         public async Task UpdateStockAsync(Stock stock)
@@ -69,7 +50,6 @@ namespace EventStock.Infrastructure.Repositories
         public async Task DeleteUserAsync(Stock stock, User user)
         {
             stock.Users.Remove(user);
-            await _context.UserStockRoles.Where(u => u.User == user && u.Stock == stock).ExecuteDeleteAsync();
             await _context.SaveChangesAsync();
         }
 
@@ -77,17 +57,14 @@ namespace EventStock.Infrastructure.Repositories
         {
             return await _context.Stocks
                 .Include(s => s.Users)
-                .Include(s => s.UserStockRoles)
-                    .ThenInclude(usr => usr.Role)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public async Task<bool> UpdateUserRoleAsync(Stock stock, User user, IdentityRole role)
         {
-            var userStockRole = await _context.UserStockRoles.FirstOrDefaultAsync(u => 
-                u.Stock == stock && u.User == user);
+            var userOldRole = await _userManager.GetRolesAsync(user);
 
-            if (userStockRole == null)
+            if (userOldRole.Count() == 0)
             {
                 return false;
             }
@@ -95,13 +72,11 @@ namespace EventStock.Infrastructure.Repositories
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
-                if (!await UpdateIdentityRoleAsync(userStockRole.Role.Name!, role!.Name!, user))
+                if (!await UpdateIdentityRoleAsync(userOldRole.First(), role!.Name!, user))
                 {
                     throw new InvalidOperationException();
                 }
 
-                userStockRole.Role = role ?? userStockRole.Role;
-                _context.UserStockRoles.Update(userStockRole);
                 await _context.SaveChangesAsync();
 
                 await transaction.CommitAsync();

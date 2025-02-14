@@ -54,13 +54,13 @@ namespace EventStock.API.Controllers
                 return BadRequest(new { message = "Invalid login credentials" });
             }
 
-            var userId = await _userService.GetUserIdByEmailAsync(loginUserDto.Email);
-            if (!userId.Succeeded)
+            var user = await _userService.GetUserByEmailAsync(loginUserDto.Email);
+            if (!user.Succeeded)
             {
-                return BadRequest(userId.Error);
+                return BadRequest(user.Error);
             }
 
-            var result = await _tokenManagementService.GenerateTokensAsync(userId.Value);
+            var result = await _tokenManagementService.GenerateTokensAsync(user.Value);
 
             return Ok(result.Value);   
         }
@@ -106,7 +106,8 @@ namespace EventStock.API.Controllers
                 return Unauthorized(checkIfTokenExpired.Error);
             }
 
-            var result = await _tokenManagementService.GenerateTokensAsync(refreshTokenFromDB.Value, UserId);
+            var user = await _userService.GetUserModelAsync(UserId);
+            var result = await _tokenManagementService.GenerateTokensAsync(refreshTokenFromDB.Value, user.Value);
 
             return Ok(result.Value);
         }
