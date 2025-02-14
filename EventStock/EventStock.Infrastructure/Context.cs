@@ -21,6 +21,11 @@ namespace EventStock.Infrastructure
         {
             base.OnModelCreating(builder);
 
+            builder.Entity<User>()
+                .HasOne(u => u.Stock)
+                .WithMany(s => s.Users)
+                .HasForeignKey(u => u.StockId);
+
             builder.Entity<Equipment>()
                 .HasMany(eq => eq.EventEquipments)
                 .WithOne(eeq => eeq.Equipment)
