@@ -38,7 +38,10 @@ namespace EventStock.Application.Services
             {
                 return Result<UserDto>.Failure(new UserNotFoundResultError());
             }
+
             var mappedUser = _mapper.Map<UserDto>(user);
+            mappedUser.Roles = [.. (await _userManager.GetRolesAsync(user))];
+
             return Result<UserDto>.Success(mappedUser);
         }
 
