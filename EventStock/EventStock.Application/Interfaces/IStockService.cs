@@ -1,9 +1,7 @@
-﻿using EventStock.Application.Dto.Equipment;
-using EventStock.Application.Dto.Event;
+﻿using EventStock.Application.Dto.Event;
 using EventStock.Application.Dto.Stock;
 using EventStock.Application.Dto.User;
 using EventStock.Application.ResultPattern;
-using Microsoft.AspNetCore.Identity;
 
 namespace EventStock.Application.Interfaces
 {
@@ -18,8 +16,6 @@ namespace EventStock.Application.Interfaces
         Task<Result<List<UserDto>>> ListUsersByStockIdAsync(int id);
         Task<Result> UpdateUserRoleAsync(int stockId, string userId, string roleName);
         
-        Task<List<ViewEquipmentDto>> ListStockEquipmentAsync(int id);
-        Task<List<ViewEquipmentDto>> ListAvailableStockEquipmentInDateAsync(int id, DateTime date);
         Task<List<ViewEventDto>> ListStockEventsAsync(int id);
         Task<List<ViewEventDto>> ListStockEventsAsync(int id, DateTime date);
     }

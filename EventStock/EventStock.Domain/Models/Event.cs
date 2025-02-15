@@ -14,7 +14,6 @@
         public ICollection<User> Employees { get; set; } = new List<User>();
         public Address? Accomodation { get; set; }
         public required Stock Stock { get; set; }
-        public ICollection<EventEquipment> EventEquipments { get; set; } = new List<EventEquipment>();
         public EventStatus Status { get; set; } = EventStatus.Scheduled;
     }
 }

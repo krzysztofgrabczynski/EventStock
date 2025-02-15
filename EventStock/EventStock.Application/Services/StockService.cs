@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using EventStock.Application.Dto.Equipment;
 using EventStock.Application.Dto.Event;
 using EventStock.Application.Dto.Stock;
 using EventStock.Application.Dto.User;
@@ -211,16 +210,6 @@ namespace EventStock.Application.Services
             await _stockRepository.UpdateStockAsync(stock);
 
             return Result.Success();
-        }
-
-        public Task<List<ViewEquipmentDto>> ListAvailableStockEquipmentInDateAsync(int id, DateTime date)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<ViewEquipmentDto>> ListStockEquipmentAsync(int id)
-        {
-            throw new NotImplementedException();
         }
 
         public Task<List<ViewEventDto>> ListStockEventsAsync(int id)

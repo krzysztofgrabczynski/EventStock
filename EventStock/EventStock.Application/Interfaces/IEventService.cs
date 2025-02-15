@@ -1,5 +1,4 @@
 ﻿using EventStock.Application.Dto.Event;
-using EventStock.Application.Dto.EventEquipment;
 using EventStock.Domain.Models;
 
 namespace EventStock.Application.Interfaces
@@ -13,10 +12,6 @@ namespace EventStock.Application.Interfaces
 
         Task AddUserAsync(User user);
         Task<List<EventUserDto>> ListUsersByEventIdAsync(int id);
-
-        Task<int> AddEquipmentToEventAsync(EventEquipmentDto eventEquipment);
-        Task<List<ViewEventEquipmentDto>> ListEventEquipmentByEventIdAsync(int id);
-        Task DeleteEventEquipmentAsync(int id);
 
         Task ChangeEventStatus(EventStatus status);
     }
