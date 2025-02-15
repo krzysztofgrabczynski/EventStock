@@ -15,12 +15,14 @@ namespace EventStock.Application.Services
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
         private readonly IUserRepository _userRepository;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
 
-        public UserService(IMapper mapper, UserManager<User> userManager, IUserRepository userRepository)
+        public UserService(IMapper mapper, UserManager<User> userManager, IUserRepository userRepository, IRefreshTokenRepository refreshTokenRepository)
         {
             _mapper = mapper;
             _userManager = userManager;
             _userRepository = userRepository;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
         public async Task<IdentityResult> CreateUserAsync(CreateUserDto userDto)
@@ -94,7 +96,13 @@ namespace EventStock.Application.Services
                 return IdentityResult.Failed(new UserNotFoundIdentityError());
             }
 
-            return await _userManager.DeleteAsync(user);
+            var deleteResult = await _userManager.DeleteAsync(user);
+            if (deleteResult.Succeeded)
+            {
+                await _refreshTokenRepository.RevokeRefreshTokensAsync(id);
+            }
+
+            return deleteResult;
         }
 
         public async Task<List<ViewStockDtoForList>> ListUsersStocksAsync(string userId)
