@@ -13,12 +13,11 @@ namespace EventStock.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<List<Stock>> ListUsersStocksAsync(string userId)
+        public async Task<Stock?> GetUserStockAsync(string userId)
         {
             return await _context.Stocks
                 .Include(s => s.Address)
-                .Where(s => s.Users.Any(u => u.Id == userId))
-                .ToListAsync();
+                .FirstOrDefaultAsync(s => s.Users.Any(u => u.Id == userId));
         }
     }
 }

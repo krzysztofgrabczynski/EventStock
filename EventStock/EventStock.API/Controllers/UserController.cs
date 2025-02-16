@@ -1,5 +1,6 @@
 ﻿using EventStock.Application.Dto.User;
 using EventStock.Application.Interfaces;
+using EventStock.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -80,11 +81,16 @@ namespace EventStock.API.Controllers
             return Ok();
         }
 
-        [HttpGet("my-stocks-list")]
-        public async Task<IActionResult> GetMyStocksList()
+        [HttpGet("my-stock")]
+        public async Task<IActionResult> GetMyStock()
         {
-            var result = await _userService.ListUsersStocksAsync(UserId);
-            return Ok(result);
+            var result = await _userService.GetUserStockAsync(UserId);
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
         }
     }
 }

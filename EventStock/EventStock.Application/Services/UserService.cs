@@ -108,16 +108,17 @@ namespace EventStock.Application.Services
             return deleteResult;
         }
 
-        public async Task<List<ViewStockDtoForList>> ListUsersStocksAsync(string userId)
+        public async Task<Result<ViewStockDto>> GetUserStockAsync(string userId)
         {
-            var result = await _userRepository.ListUsersStocksAsync(userId);
-            var mappedStocksList = new List<ViewStockDtoForList>();
-            foreach (var stock in result)
+            var result = await _userRepository.GetUserStockAsync(userId);
+            if (result == null)
             {
-                mappedStocksList.Add(_mapper.Map<ViewStockDtoForList>(stock));
+                return Result<ViewStockDto>.Failure(new StockDoesNotExistResultError());
             }
 
-            return mappedStocksList;
+            var mappedStock =  _mapper.Map<ViewStockDto>(result);
+
+            return Result<ViewStockDto>.Success(mappedStock);
         }    
 
         private class UserNotFoundIdentityError : IdentityError

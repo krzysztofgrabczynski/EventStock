@@ -16,6 +16,6 @@ namespace EventStock.Application.Interfaces
         Task<IdentityResult> UpdateUserAsync(string id, UserDto updatedUser);
         Task<IdentityResult> UpdateUserPasswordAsync(string id, ChangeUserPasswordDto changePasswordDto);
         Task<IdentityResult> DeleteUserAsync(string id);
-        Task<List<ViewStockDtoForList>> ListUsersStocksAsync(string id);
+        Task<Result<ViewStockDto>> GetUserStockAsync(string id);
     }
 }

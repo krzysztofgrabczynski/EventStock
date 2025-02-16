@@ -4,6 +4,6 @@ namespace EventStock.Domain.Interfaces
 {
     public interface IUserRepository
     {
-        Task<List<Stock>> ListUsersStocksAsync(string userId);
+        Task<Stock?> GetUserStockAsync(string userId);
     }
 }
