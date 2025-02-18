@@ -50,10 +50,19 @@ export const changeMyPasswordAPI = async (request: UserPasswordUpdate) => {
     }
 }
 
-export const myStocktAPI = async () => {
+export const myStockAPI = async (accessToken: string | null = null) => {
     try {
-        const data = axios.get<void>(API_BASE_URL + "User/my-stock");
-        return data;
+        if (!accessToken) {
+            const data = axios.get<void>(API_BASE_URL + "User/my-stock");
+            return data;
+        } else {
+            const data = axios.get<void>(API_BASE_URL + "User/my-stock", {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+            return data;
+        }
     } catch (error) {
         console.log("error message: ", error);
         return error;

@@ -6,7 +6,7 @@ import { loginAPI, logoutAPI, registerAPI } from "../Api/apiAuth";
 import { LoginRequest } from "../Models/Auth/LoginRequest";
 import { RegisterRequest } from "../Models/Auth/RegisterRequest";
 import { UserProfile } from "../Models/User/UserProfile";
-import { getMyProfileAPI, updateMyProfileAPI } from "../Api/apiUser";
+import { getMyProfileAPI, myStockAPI, updateMyProfileAPI } from "../Api/apiUser";
 
 type AuthContextType = {
     token: string | null;
@@ -52,12 +52,14 @@ export const AuthProvider = ({ children }: Props) => {
         try {
             const loginResponse = await loginAPI(loginRequest)
             const userResponse = await getMyProfileAPI(loginResponse.data.accessToken);
-            if (loginResponse && userResponse) {
+            const userStockResponse = await myStockAPI(loginResponse.data.accessToken)
+            if (loginResponse && userResponse && userStockResponse) {
                 const userObj: UserProfile = {
                     email: userResponse.data.email,
                     firstName: userResponse.data.firstName,
                     lastName: userResponse.data.lastName,
-                    roles: userResponse.data.roles
+                    roles: userResponse.data.roles,
+                    stockId: userStockResponse.data.id
                 };
 
                 localStorage.setItem("token", loginResponse.data.accessToken);

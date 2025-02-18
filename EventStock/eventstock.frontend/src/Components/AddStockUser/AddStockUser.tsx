@@ -4,6 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { addUserToStockAPI } from "../../Api/apiStock";
 import { Roles } from "../../Models/Stock/Roles";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../Context/useAuth";
 
 interface Props { }
 
@@ -14,9 +15,10 @@ type AddUserToStockForm = {
 }
 
 const AddStockUser = (props: Props) => {
+    const { user } = useAuth();
     const navigate = useNavigate();
     const validation = Yup.object().shape({
-        stockId: Yup.number().required("Stock ID is required"),
+        stockId: Yup.number().required("Stock ID is required").min(0, "Missing stock error"),
         email: Yup.string().required("User email is required"),
         role: Yup.number().required("Role is required")
     });
@@ -36,11 +38,10 @@ const AddStockUser = (props: Props) => {
 
             <form onSubmit={handleSubmit(handleAPI)} className="space-y-4">
                 <div>
-                    <p className="text-gray-500 text-sm">Stock ID</p>
                     <input
-                        type="number"
+                        type="hidden"
+                        value={user?.stockId || -1}
                         {...register("stockId")}
-                        className="text-lg font-semibold text-blue-600 border p-2 rounded w-full"
                     />
                     {errors.stockId && <p className="text-red-500">{errors.stockId.message}</p>}
                 </div>

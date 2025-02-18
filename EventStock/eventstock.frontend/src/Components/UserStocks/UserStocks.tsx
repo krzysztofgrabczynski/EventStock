@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Stock } from "../../Models/Stock/Stocks";
-import { myStocktAPI } from "../../Api/apiUser";
+import { myStockAPI } from "../../Api/apiUser";
 
 type Props = {};
 
@@ -8,7 +8,7 @@ const UserStocks = (props: Props) => {
     const [stock, setStock] = useState<Stock[]>([]);
 
     const fetchData = async () => {
-        const response = await myStocktAPI();
+        const response = await myStockAPI();
         setStock(response.data);
     }
 
