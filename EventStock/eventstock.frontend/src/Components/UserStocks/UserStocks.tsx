@@ -40,7 +40,6 @@ const UserStocks = (props: Props) => {
                 <p className="text-gray-600">No stock available</p>
             )}
         </div>
-
     );
 };
 

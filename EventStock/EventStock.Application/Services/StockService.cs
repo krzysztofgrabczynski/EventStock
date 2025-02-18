@@ -33,10 +33,10 @@ namespace EventStock.Application.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<Result> AddUserAsync(int stockId, string userId, string roleName)
+        public async Task<Result> AddUserAsync(int stockId, string email, string roleName)
         {
             var stock = await _stockRepository.GetStockAsync(stockId);
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByEmailAsync(email);
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
             if (!authorizationResult.Succeeded)
@@ -49,7 +49,7 @@ namespace EventStock.Application.Services
                 return Result.Failure(new StockAddUserResultError());
             }
 
-            if (stock.Users.Any(u => u.Id == userId))
+            if (stock.Users.Any(u => u.Email == email))
             {
                 return Result.Failure(new UserExistInStockResultError());
             }
@@ -68,10 +68,10 @@ namespace EventStock.Application.Services
             return Result.Success();
         }
 
-        public async Task<Result> UpdateUserRoleAsync(int stockId, string userId, string roleName)
+        public async Task<Result> UpdateUserRoleAsync(int stockId, string email, string roleName)
         {
             var stock = await _stockRepository.GetStockAsync(stockId);
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByEmailAsync(email);
 
             var authorizationResult = await _authorizationService.AuthorizeAsync(_httpContextAccessor.HttpContext.User, stock, "IsStockUser");
             if (!authorizationResult.Succeeded)
@@ -84,7 +84,7 @@ namespace EventStock.Application.Services
                 return Result.Failure(new StockAddUserResultError());
             }
 
-            if (!stock.Users.Any(u => u.Id == userId))
+            if (!stock.Users.Any(u => u.Email == email))
             {
                 return Result.Failure(new UserNotExistInStockResultError());
             }

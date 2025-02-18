@@ -7,6 +7,7 @@ import UserProfile from "../Components/UserProfile/UserProfile";
 import PresentationPage from "../Pages/PresentationPage/PresentationPage";
 import UserStocks from "../Components/UserStocks/UserStocks";
 import ProtectedRoute from "./ProtectedRoute";
+import AddStockUser from "../Components/AddStockUser/AddStockUser";
 
 export const router = createBrowserRouter([
     {
@@ -25,7 +26,8 @@ export const router = createBrowserRouter([
                 ),
                 children: [
                     { path: "profile", element: <UserProfile /> },
-                    { path: "stocks", element: <UserStocks /> },
+                    { path: "stock", element: <UserStocks /> },
+                    { path: "add-user-to-stock", element: <AddStockUser /> },
                 ],
             },
         ],

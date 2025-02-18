@@ -8,7 +8,7 @@ namespace EventStock.Application.Dto.Stock
         [Required]
         public int StockId { get; set; }
         [Required]
-        public string UserId { get; set; }
+        public string Email { get; set; }
         [Required]
         public Role Role { get; set; }
     }

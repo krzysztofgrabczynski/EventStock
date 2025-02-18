@@ -66,7 +66,7 @@ namespace EventStock.API.Controllers
                 return BadRequest("Provided role does not exist");
             }
 
-            var result = await _stockService.AddUserAsync(request.StockId, request.UserId, request.Role.ToString());
+            var result = await _stockService.AddUserAsync(request.StockId, request.Email, request.Role.ToString());
             if (!result.Succeeded)
             {
                 return BadRequest(result.Error);
@@ -84,7 +84,7 @@ namespace EventStock.API.Controllers
                 return BadRequest("Provided role does not exist");
             }
 
-            var result = await _stockService.UpdateUserRoleAsync(request.StockId, request.UserId, request.Role.ToString());
+            var result = await _stockService.UpdateUserRoleAsync(request.StockId, request.Email, request.Role.ToString());
             if (!result.Succeeded)
             {
                 return BadRequest(result.Error);
