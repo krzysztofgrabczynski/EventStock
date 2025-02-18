@@ -32,7 +32,7 @@ namespace EventStock.API.Controllers
 
         [HttpPut("update-stock/{id}")]
         [Authorize(Policy = "StockModeratorPolicy")]
-        public async Task<IActionResult> UpdateStock(int id, [FromBody] ViewStockDtoForList stockDto)
+        public async Task<IActionResult> UpdateStock(int id, [FromBody] UpdateStockDto stockDto)
         {
             var result = await _stockService.UpdateStockAsync(id, stockDto);
             if (!result.Succeeded)

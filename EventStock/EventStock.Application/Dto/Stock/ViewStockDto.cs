@@ -6,6 +6,7 @@ namespace EventStock.Application.Dto.Stock
 {
     public class ViewStockDto : IMapFrom<EventStock.Domain.Models.Stock>
     {
+        public int Id { get; set; }
         public required string Name { get; set; }
         public Address? Address { get; set; }
 

@@ -190,7 +190,7 @@ namespace EventStock.Application.Services
             return Result<List<UserDto>>.Success(mappedUsers);
         }
 
-        public async Task<Result> UpdateStockAsync(int stockId, ViewStockDtoForList stockDto)
+        public async Task<Result> UpdateStockAsync(int stockId, UpdateStockDto stockDto)
         {
             var stock = await _stockRepository.GetStockAsync(stockId);
             if (stock == null)
