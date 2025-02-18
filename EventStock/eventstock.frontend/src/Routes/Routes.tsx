@@ -8,6 +8,7 @@ import PresentationPage from "../Pages/PresentationPage/PresentationPage";
 import UserStocks from "../Components/UserStocks/UserStocks";
 import ProtectedRoute from "./ProtectedRoute";
 import AddStockUser from "../Components/AddStockUser/AddStockUser";
+import ListStockUsers from "../Components/ListStockUsers/ListStockUsers";
 
 export const router = createBrowserRouter([
     {
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
                     { path: "profile", element: <UserProfile /> },
                     { path: "stock", element: <UserStocks /> },
                     { path: "add-user-to-stock", element: <AddStockUser /> },
+                    { path: "list-users-in-stock", element: <ListStockUsers /> },
                 ],
             },
         ],

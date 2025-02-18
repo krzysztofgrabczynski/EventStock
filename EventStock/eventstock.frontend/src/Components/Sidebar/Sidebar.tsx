@@ -35,6 +35,12 @@ const Sidebar = (props: Props) => {
                         <a href="#" className="block text-lg font-medium text-gray-700 hover:text-blue-500">Add user to stock</a>
                     </Link>
                 </li>
+                <li>
+                    <Link
+                        to="list-users-in-stock">
+                        <a href="#" className="block text-lg font-medium text-gray-700 hover:text-blue-500">List users in stock</a>
+                    </Link>
+                </li>
             </ul>
         </nav>
     );

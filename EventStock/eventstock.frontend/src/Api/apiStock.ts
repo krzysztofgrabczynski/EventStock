@@ -14,3 +14,13 @@ export const addUserToStockAPI = async (request: AddUserToStock) => {
         return error;
     }
 }
+
+export const listUserInStockAPI = async (stockId: number) => {
+    try {
+        const data = await axios.get(API_BASE_URL + "Stock/list-stock-users/" + stockId);
+        return data;
+    } catch (error) {
+        console.log("error message: ", error);
+        return error;
+    }
+}
