@@ -6,5 +6,4 @@ export interface Address {
     street: string;
     buildingNumber: string;
     flatNumber: number | undefined;
-
 }

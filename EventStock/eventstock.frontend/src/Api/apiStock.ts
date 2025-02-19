@@ -2,6 +2,7 @@ import axios from "axios"
 import { API_BASE_URL } from "./config"
 import { AddUserToStock } from "../Models/Stock/AddUserToStock";
 import { UpdateUserRole } from "../Models/Stock/UpdateUserRole";
+import { UpdateStockAddress } from "../Models/Stock/UpdateStockAddress";
 
 export const addUserToStockAPI = async (request: AddUserToStock) => {
     try {
@@ -35,7 +36,19 @@ export const editUsersRoleInStockAPI = async (request: UpdateUserRole) => {
         });
         return data;
     } catch (error) {
-        console.log(request.role);
+        console.log("error message: ", error);
+        return error;
+    }
+}
+
+export const editStockAddressAPI = async (request: UpdateStockAddress) => {
+    try {
+        const data = await axios.put(API_BASE_URL + "Stock/update-stock/" + request.stockId, {
+            address: request.address,
+        })
+        return data;
+
+    } catch (error) {
         console.log("error message: ", error);
         return error;
     }

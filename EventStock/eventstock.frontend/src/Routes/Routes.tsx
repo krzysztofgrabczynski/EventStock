@@ -9,7 +9,8 @@ import UserStocks from "../Components/UserStocks/UserStocks";
 import ProtectedRoute from "./ProtectedRoute";
 import AddStockUser from "../Components/AddStockUser/AddStockUser";
 import ListStockUsers from "../Components/ListStockUsers/ListStockUsers";
-import EditStockUsers from "../Components/EditStockUsers/EditStockUsers";
+import UpdateStockAddress from "../Components/UpdateStockAddress/UpdateStockAddress";
+import ProtectedRoutePerRole from "./ProtectedRoutePerRole";
 
 export const router = createBrowserRouter([
     {
@@ -28,10 +29,28 @@ export const router = createBrowserRouter([
                 ),
                 children: [
                     { path: "profile", element: <UserProfile /> },
-                    { path: "stock", element: <UserStocks /> },
-                    { path: "add-user-to-stock", element: <AddStockUser /> },
+                    {
+                        path: "stock", element: (
+                            <ProtectedRoutePerRole>
+                                <UserStocks />
+                            </ProtectedRoutePerRole>
+                        )
+                    },
+                    {
+                        path: "update-stock-address", element: (
+                            <ProtectedRoutePerRole>
+                                <UpdateStockAddress />
+                            </ProtectedRoutePerRole>
+                        )
+                    },
+                    {
+                        path: "add-user-to-stock", element: (
+                            <ProtectedRoutePerRole>
+                                <AddStockUser />
+                            </ProtectedRoutePerRole>
+                        )
+                    },
                     { path: "list-users-in-stock", element: <ListStockUsers /> },
-                    { path: "edit-stock-users", element: <EditStockUsers /> }
                 ],
             },
         ],
