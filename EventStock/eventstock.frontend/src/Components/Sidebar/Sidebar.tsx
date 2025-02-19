@@ -19,12 +19,6 @@ const Sidebar = (props: Props) => {
             <ul className="mt-6 space-y-4">
                 <li>
                     <Link
-                        to="profile">
-                        <a href="#" className="block text-lg font-medium text-gray-700 hover:text-blue-500">Profile</a>
-                    </Link>
-                </li>
-                <li>
-                    <Link
                         to="stock">
                         <a href="#" className="block text-lg font-medium text-gray-700 hover:text-blue-500">Stock</a>
                     </Link>

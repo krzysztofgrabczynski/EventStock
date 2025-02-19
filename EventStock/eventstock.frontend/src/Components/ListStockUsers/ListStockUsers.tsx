@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
-import { listUserInStockAPI } from "../../Api/apiStock";
+import { listUserInStockAPI, editUsersRoleInStockAPI } from "../../Api/apiStock"; 
 import { useAuth } from "../../Context/useAuth";
 import { UserForListUsers } from "../../Models/User/UserForListUsers";
+import { Roles } from "../../Models/Stock/Roles"; 
+import { UpdateUserRole } from "../../Models/Stock/UpdateUserRole";
 
 interface Props { }
 
 const ListStockUsers = (props: Props) => {
-    const { user } = useAuth()
+    const { user } = useAuth();
     const [users, setUsers] = useState<UserForListUsers[]>([]);
+    const [selectedUser, setSelectedUser] = useState<UserForListUsers | null>(null);
+    const [newRole, setNewRole] = useState<string>("");
+    const [showModal, setShowModal] = useState(false);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -20,9 +25,38 @@ const ListStockUsers = (props: Props) => {
         }
     }, [user.stockId]);
 
+    const hasEditPermissions = user.roles.includes("StockAdmin") || user.roles.includes("StockModerator");
+
+    const handleEditClick = (userToEdit: UserForListUsers) => {
+        setSelectedUser(userToEdit);
+        setNewRole(userToEdit.roles[0] || "");
+        setShowModal(true); 
+    };
+
+    const handleSaveRole = async () => {
+        if (selectedUser) {
+            const updateUserRoleRequest: UpdateUserRole = {
+                stockId: user.stockId,
+                email: selectedUser.email,
+                role: Roles[newRole as keyof typeof Roles],
+            };
+                
+            await editUsersRoleInStockAPI(updateUserRoleRequest);
+
+            const updatedUsers = users.map((u) =>
+                u.id === selectedUser.id ? { ...u, roles: [newRole] } : u
+            );
+            setUsers(updatedUsers);
+
+            setShowModal(false); 
+            setSelectedUser(null); 
+        }
+    };
+
     return (
         <div>
             <h2 className="text-2xl font-bold mb-4 text-blue-600">List of Users in Stock</h2>
+
             {users.length === 0 ? (
                 <p className="text-gray-600">No users found for this stock.</p>
             ) : (
@@ -38,12 +72,60 @@ const ListStockUsers = (props: Props) => {
                                     Roles: <span className="font-bold">{user.roles.join(", ")}</span>
                                 </p>
                             )}
+
+                            {hasEditPermissions && (
+                                <button
+                                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                                    onClick={() => handleEditClick(user)}
+                                >
+                                    Edit Role
+                                </button>
+                            )}
                         </li>
                     ))}
                 </ul>
             )}
-        </div>
 
+            {showModal && selectedUser && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded shadow-lg w-96">
+                        <h3 className="text-xl font-bold mb-4">
+                            Edit Role for {selectedUser.firstName} {selectedUser.lastName}
+                        </h3>
+
+                        <label className="block mb-2 text-gray-700">Select New Role:</label>
+                        <select
+                            className="w-full p-2 border border-gray-300 rounded"
+                            value={newRole}
+                            onChange={(e) => setNewRole(e.target.value)}
+                        >
+                            {Object.keys(Roles)
+                                .filter((key) => isNaN(Number(key))) 
+                                .map((roleKey) => (
+                                    <option key={roleKey} value={roleKey}>
+                                        {roleKey}
+                                    </option>
+                                ))}
+                        </select>
+
+                        <div className="flex justify-end mt-4">
+                            <button
+                                className="px-4 py-2 mr-2 bg-gray-300 rounded hover:bg-gray-400"
+                                onClick={() => setShowModal(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
+                                onClick={handleSaveRole}
+                            >
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };
 

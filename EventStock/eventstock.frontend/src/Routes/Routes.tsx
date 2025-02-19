@@ -9,6 +9,7 @@ import UserStocks from "../Components/UserStocks/UserStocks";
 import ProtectedRoute from "./ProtectedRoute";
 import AddStockUser from "../Components/AddStockUser/AddStockUser";
 import ListStockUsers from "../Components/ListStockUsers/ListStockUsers";
+import EditStockUsers from "../Components/EditStockUsers/EditStockUsers";
 
 export const router = createBrowserRouter([
     {
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
                     { path: "stock", element: <UserStocks /> },
                     { path: "add-user-to-stock", element: <AddStockUser /> },
                     { path: "list-users-in-stock", element: <ListStockUsers /> },
+                    { path: "edit-stock-users", element: <EditStockUsers /> }
                 ],
             },
         ],

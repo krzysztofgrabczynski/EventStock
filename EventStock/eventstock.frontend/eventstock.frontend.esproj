@@ -12,6 +12,7 @@
     <Folder Include="public\" />
     <Folder Include="src\Components\AddStockUser\" />
     <Folder Include="src\Components\ListStockUsers\" />
+    <Folder Include="src\Components\EditStockUsers\" />
     <Folder Include="src\Components\UserStocks\" />
     <Folder Include="src\Components\UserProfile\" />
     <Folder Include="src\Context\" />

@@ -17,10 +17,10 @@ const Navbar = (props: Props) => {
                     {/* Jeœli u¿ytkownik jest zalogowany, poka¿ przycisk "Home" */}
                     {isLoggedIn() && (
                         <Link
-                            to="/home"
+                            to="/home/profile"
                             className="px-4 py-2 font-medium text-white bg-blue-500 rounded hover:bg-blue-600 transition"
                         >
-                            Home
+                            Profile
                         </Link>
                     )}
                 </div>
