@@ -56,55 +56,6 @@ namespace EventStock.Tests
         }
 
         //[Fact]
-        //public async Task CreateStockAsyncPositiveTest()
-        //{
-        //    // Arrange
-        //    _mapperMock.Setup(m => m.Map<Stock>(It.IsAny<CreateStockDto>())).Returns<CreateStockDto>(s => 
-        //    new Stock()
-        //    {
-        //        Id = 1,
-        //        Name = s.Name,
-        //        Address = s.Address,
-        //        Users = s.Users
-        //    });
-        //    _stockRepositoryMock.Setup(s => s.CreateStockAsync(It.IsAny<Stock>())).ReturnsAsync(1);
-        //    var stock = new CreateStockDto()
-        //    {
-        //        Name = "TestStock",
-        //        Address = null,
-        //        Users = new List<User>()
-        //    };
-
-        //    // Act
-        //    var result = await _stockService.CreateStockAsync(stock);
-
-        //    // Assert
-        //    Assert.NotNull(result);
-        //    Assert.True(result.Succeeded);
-        //    Assert.Equal(1, result.Value);
-        //}
-
-        //[Fact]
-        //public async Task CreateStockAsyncNegativeTest()
-        //{
-        //    // Arrange
-        //    _stockRepositoryMock.Setup(s => s.CreateStockAsync(It.IsAny<Stock>())).ReturnsAsync((int?)null);
-        //    var stock = new CreateStockDto()
-        //    {
-        //        Name = "TestStock",
-        //        Address = null,
-        //        Users = new List<User>()
-        //    };
-
-        //    // Act
-        //    var result = await _stockService.CreateStockAsync(stock);
-
-        //    // Assert
-        //    Assert.NotNull(result);
-        //    Assert.False(result.Succeeded);
-        //}
-
-        //[Fact]
         //public async Task GetStockAsyncPositiveTest()
         //{
         //    // Arrange
@@ -131,7 +82,7 @@ namespace EventStock.Tests
         //            Email = u.Email,
         //            FirstName = u.FirstName,
         //            LastName = u.LastName
-                   
+
         //        }).ToList()
         //    });
 
