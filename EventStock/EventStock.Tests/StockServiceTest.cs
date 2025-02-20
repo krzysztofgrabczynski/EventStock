@@ -218,12 +218,12 @@ namespace EventStock.Tests
                 NormalizedName = "StockAdmin"
             };
             _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
-            _userManagerMock.Setup(u => u.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            _userManagerMock.Setup(u => u.FindByEmailAsync(user.Email)).ReturnsAsync(user);
             _roleRepositoryMock.Setup(r => r.GetRoleByNameAsync(role.ToString())).ReturnsAsync(identityRole);
             _stockRepositoryMock.Setup(s => s.AddUserAsync(stock, user, identityRole)).ReturnsAsync(true);
 
             // Act
-            var result = await _stockService.AddUserAsync(stock.Id, user.Id, role.ToString());
+            var result = await _stockService.AddUserAsync(stock.Id, user.Email, role.ToString());
 
             // Assert
             Assert.NotNull(result);
@@ -254,10 +254,10 @@ namespace EventStock.Tests
                 NormalizedName = "StockAdmin"
             };
             _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
-            _userManagerMock.Setup(u => u.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            _userManagerMock.Setup(u => u.FindByEmailAsync(user.Email)).ReturnsAsync(user);
 
             // Act
-            var result = await _stockService.AddUserAsync(stock.Id, user.Id, role.ToString());
+            var result = await _stockService.AddUserAsync(stock.Id, user.Email, role.ToString());
 
             // Assert
             Assert.NotNull(result);
@@ -289,11 +289,11 @@ namespace EventStock.Tests
                 NormalizedName = "StockAdmin"
             };
             _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
-            _userManagerMock.Setup(u => u.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            _userManagerMock.Setup(u => u.FindByEmailAsync(user.Email)).ReturnsAsync(user);
             _roleRepositoryMock.Setup(r => r.GetRoleByNameAsync(role.ToString())).ReturnsAsync((IdentityRole?)null);
 
             // Act
-            var result = await _stockService.AddUserAsync(stock.Id, user.Id, role.ToString());
+            var result = await _stockService.AddUserAsync(stock.Id, user.Email, role.ToString());
 
             // Assert
             Assert.NotNull(result);
@@ -325,12 +325,12 @@ namespace EventStock.Tests
                 NormalizedName = "StockAdmin"
             };
             _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
-            _userManagerMock.Setup(u => u.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            _userManagerMock.Setup(u => u.FindByEmailAsync(user.Email)).ReturnsAsync(user);
             _roleRepositoryMock.Setup(r => r.GetRoleByNameAsync(role.ToString())).ReturnsAsync(newIdentityRole);
             _stockRepositoryMock.Setup(s => s.UpdateUserRoleAsync(stock, user, newIdentityRole)).ReturnsAsync(true);
 
             // Act
-            var result = await _stockService.UpdateUserRoleAsync(stock.Id, user.Id, role.ToString());
+            var result = await _stockService.UpdateUserRoleAsync(stock.Id, user.Email, role.ToString());
 
             // Assert
             Assert.NotNull(result);
@@ -361,10 +361,10 @@ namespace EventStock.Tests
                 NormalizedName = "StockAdmin"
             };
             _stockRepositoryMock.Setup(s => s.GetStockAsync(stock.Id)).ReturnsAsync(stock);
-            _userManagerMock.Setup(u => u.FindByIdAsync(user.Id)).ReturnsAsync(user);
+            _userManagerMock.Setup(u => u.FindByEmailAsync(user.Email)).ReturnsAsync(user);
 
             // Act
-            var result = await _stockService.UpdateUserRoleAsync(stock.Id, user.Id, role.ToString());
+            var result = await _stockService.UpdateUserRoleAsync(stock.Id, user.Email, role.ToString());
 
             // Assert
             Assert.NotNull(result);
