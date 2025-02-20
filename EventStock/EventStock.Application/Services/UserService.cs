@@ -77,6 +77,14 @@ namespace EventStock.Application.Services
             {
                 return IdentityResult.Failed(new UserNotFoundIdentityError());
             }
+            if (updatedUser.Email != null && updatedUser.Email != user.Email)
+            {
+                if (await _userRepository.EmailExistInDB(updatedUser.Email))
+                { 
+                    return IdentityResult.Failed(new UserWithThatEmailExists());
+                }
+            }
+
             user.Email = updatedUser.Email ?? user.Email;
             user.FirstName = updatedUser.FirstName ?? user.FirstName;
             user.LastName = updatedUser.LastName ?? user.LastName;
