@@ -13,6 +13,11 @@ namespace EventStock.Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task<bool> EmailExistInDB(string userEmail)
+        {
+            return await _context.Users.AnyAsync(u => u.Email == userEmail);
+        }
+
         public async Task<Stock?> GetUserStockAsync(string userId)
         {
             return await _context.Stocks

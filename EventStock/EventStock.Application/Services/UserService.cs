@@ -27,6 +27,10 @@ namespace EventStock.Application.Services
 
         public async Task<IdentityResult> CreateUserAsync(CreateUserDto userDto)
         {
+            if (await _userRepository.EmailExistInDB(userDto.Email))
+            {
+                return IdentityResult.Failed(new UserWithThatEmailExists());
+            }
             var mappedUser = _mapper.Map<User>(userDto);
             return await _userManager.CreateAsync(mappedUser, userDto.Password);
         }
@@ -127,6 +131,15 @@ namespace EventStock.Application.Services
             {
                 Code = "UserNotFound"; 
                 Description = "User with provided ID was not found";
+            }
+        }
+
+        private class UserWithThatEmailExists : IdentityError
+        {
+            public UserWithThatEmailExists()
+            {
+                Code = "UserWithThatEmailExists";
+                Description = "User with that email already exists.";
             }
         }
     }
