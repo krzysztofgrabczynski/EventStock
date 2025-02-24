@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { listUserInStockAPI, editUsersRoleInStockAPI } from "../../Api/apiStock"; 
+import { listUserInStockAPI, editUsersRoleInStockAPI, deleteUserFromStockAPI } from "../../Api/apiStock";
 import { useAuth } from "../../Context/useAuth";
 import { UserForListUsers } from "../../Models/User/UserForListUsers";
-import { Roles } from "../../Models/Stock/Roles"; 
+import { Roles } from "../../Models/Stock/Roles";
 import { UpdateUserRole } from "../../Models/Stock/UpdateUserRole";
+import { DeleteUserFromStock } from "../../Models/Stock/DeleteUserFromStock";
 
 interface Props { }
 
@@ -13,6 +14,7 @@ const ListStockUsers = (props: Props) => {
     const [selectedUser, setSelectedUser] = useState<UserForListUsers | null>(null);
     const [newRole, setNewRole] = useState<string>("");
     const [showModal, setShowModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false); // Dodanie zmiennej do kontrolowania modala usuwania u¿ytkownika
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -30,7 +32,7 @@ const ListStockUsers = (props: Props) => {
     const handleEditClick = (userToEdit: UserForListUsers) => {
         setSelectedUser(userToEdit);
         setNewRole(userToEdit.roles[0] || "");
-        setShowModal(true); 
+        setShowModal(true);
     };
 
     const handleSaveRole = async () => {
@@ -40,7 +42,7 @@ const ListStockUsers = (props: Props) => {
                 email: selectedUser.email,
                 role: Roles[newRole as keyof typeof Roles],
             };
-                
+
             await editUsersRoleInStockAPI(updateUserRoleRequest);
 
             const updatedUsers = users.map((u) =>
@@ -48,8 +50,28 @@ const ListStockUsers = (props: Props) => {
             );
             setUsers(updatedUsers);
 
-            setShowModal(false); 
-            setSelectedUser(null); 
+            setShowModal(false);
+            setSelectedUser(null);
+        }
+    };
+
+    const handleDeleteClick = (userToDelete: UserForListUsers) => {
+        setSelectedUser(userToDelete);
+        setShowDeleteModal(true); // Pokazuje modal do potwierdzenia usuniêcia
+    };
+
+    const handleDeleteUser = async () => {
+        if (selectedUser) {
+            const deleteUserRequest: DeleteUserFromStock = {
+                stockId: user.stockId,
+                userId: selectedUser.id
+            };
+            await deleteUserFromStockAPI(deleteUserRequest);
+
+            setUsers(users.filter((u) => u.id !== selectedUser.id)); // Usuwa u¿ytkownika z listy
+
+            setShowDeleteModal(false);
+            setSelectedUser(null);
         }
     };
 
@@ -74,12 +96,20 @@ const ListStockUsers = (props: Props) => {
                             )}
 
                             {hasEditPermissions && (
-                                <button
-                                    className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                                    onClick={() => handleEditClick(user)}
-                                >
-                                    Edit Role
-                                </button>
+                                <div className="flex space-x-2 mt-2">
+                                    <button
+                                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+                                        onClick={() => handleEditClick(user)}
+                                    >
+                                        Edit Role
+                                    </button>
+                                    <button
+                                        className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
+                                        onClick={() => handleDeleteClick(user)}
+                                    >
+                                        Delete User
+                                    </button>
+                                </div>
                             )}
                         </li>
                     ))}
@@ -100,7 +130,7 @@ const ListStockUsers = (props: Props) => {
                             onChange={(e) => setNewRole(e.target.value)}
                         >
                             {Object.keys(Roles)
-                                .filter((key) => isNaN(Number(key))) 
+                                .filter((key) => isNaN(Number(key)))
                                 .map((roleKey) => (
                                     <option key={roleKey} value={roleKey}>
                                         {roleKey}
@@ -120,6 +150,33 @@ const ListStockUsers = (props: Props) => {
                                 onClick={handleSaveRole}
                             >
                                 Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showDeleteModal && selectedUser && (
+                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white p-6 rounded shadow-lg w-96">
+                        <h3 className="text-xl font-bold mb-4">
+                            Confirm Deletion
+                        </h3>
+                        <p className="text-gray-700 mb-4">
+                            Are you sure you want to delete {selectedUser.firstName} {selectedUser.lastName}?
+                        </p>
+                        <div className="flex justify-end">
+                            <button
+                                className="px-4 py-2 mr-2 bg-gray-300 rounded hover:bg-gray-400"
+                                onClick={() => setShowDeleteModal(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700"
+                                onClick={handleDeleteUser}
+                            >
+                                Delete
                             </button>
                         </div>
                     </div>

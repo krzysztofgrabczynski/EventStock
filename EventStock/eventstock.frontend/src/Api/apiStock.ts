@@ -3,6 +3,7 @@ import { API_BASE_URL } from "./config"
 import { AddUserToStock } from "../Models/Stock/AddUserToStock";
 import { UpdateUserRole } from "../Models/Stock/UpdateUserRole";
 import { UpdateStockAddress } from "../Models/Stock/UpdateStockAddress";
+import { DeleteUserFromStock } from "../Models/Stock/DeleteUserFromStock";
 
 export const addUserToStockAPI = async (request: AddUserToStock) => {
     try {
@@ -53,3 +54,17 @@ export const editStockAddressAPI = async (request: UpdateStockAddress) => {
         return error;
     }
 }
+
+export const deleteUserFromStockAPI = async (request: DeleteUserFromStock) => {
+    try {
+        await axios.delete(API_BASE_URL + "Stock/delete-user", {
+            data: {
+                stockId: request.stockId,
+                userId: request.userId,
+            }
+        });
+    } catch (error) {
+        console.log("error message: ", error);
+        return error;
+    }
+};

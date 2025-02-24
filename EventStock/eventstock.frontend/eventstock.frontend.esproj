@@ -15,7 +15,6 @@
     <Folder Include="src\Components\UserStocks\" />
     <Folder Include="src\Components\UserProfile\" />
     <Folder Include="src\Context\" />
-    <Folder Include="src\Models\Stock\" />
     <Folder Include="src\Models\User\" />
     <Folder Include="src\Pages\LoginPage\" />
     <Folder Include="src\Pages\HomePage.tsx\" />
