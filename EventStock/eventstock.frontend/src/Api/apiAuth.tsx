@@ -44,3 +44,15 @@ export const logoutAPI = async (refreshToken: string) => {
         return error;
     }
 }
+
+export const refreshTokenAPI = async (refreshToken: string) => {
+    try {
+        const data = axios.post(API_BASE_URL + "Authenticate/refresh-token", {
+            refreshToken: refreshToken
+        });
+        return data;
+    } catch (error) {
+        console.log("error message: ", error);
+        return error;
+    }
+}
