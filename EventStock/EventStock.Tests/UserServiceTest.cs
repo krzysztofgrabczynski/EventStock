@@ -8,6 +8,7 @@ using EventStock.Domain.Interfaces;
 using EventStock.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Moq;
+using System.Xml.Linq;
 
 namespace EventStock.Tests
 {
@@ -109,70 +110,68 @@ namespace EventStock.Tests
             Assert.NotEqual(result.Error, ResultError.None);
         }
 
-        //[Fact]
-        //public async Task GetUserIdByEmailAsyncPositiveTest()
-        //{
-        //    // Arrange
-        //    var user = new User()
-        //    {
-        //        Id = "test-id",
-        //        Email = "test@emial.com",
-        //        FirstName = "John",
-        //        LastName = "Doe"
-        //    };
-        //    _userManagerMock.Setup(u => u.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
+        [Fact]
+        public async Task GetUserModelAsyncTest()
+        {
+            // Arrange
+            var user = new User()
+            {
+                Id = "test-id",
+                Email = "test@emial.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
+          
+            _userManagerMock.Setup(u => u.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
 
-        //    // Act
-        //    var result = await _userService.GetUserIdByEmailAsync("test@emial.com");
+            // Act
+            var result = await _userService.GetUserModelAsync("test-id");
 
-        //    // Assert
-        //    Assert.NotNull(result);
-        //    Assert.True(result.Succeeded);
-        //    Assert.Equal(result.Error, ResultError.None);
-        //    Assert.Equal(result.Value, user.Id);
-        //}
+            // Assert
+            Assert.NotNull(result);
+            Assert.True(result.Succeeded);
+            Assert.Equal(result.Error, ResultError.None);
+            Assert.Equal(result.Value.FirstName, user.FirstName);
+        }
 
-        //[Fact]
-        //public async Task GetUserIdByEmailAsyncNegativeTest()
-        //{
-        //    // Arrange
-        //    var user = new User()
-        //    {
-        //        Id = "test-id",
-        //        Email = "test@emial.com",
-        //        FirstName = "John",
-        //        LastName = "Doe"
-        //    };
-        //    _userManagerMock.Setup(u => u.FindByIdAsync(It.IsAny<string>())).ReturnsAsync(user);
+        [Fact]
+        public async Task GetUserByEmailAsyncTest()
+        {
+            // Arrange
+            var user = new User()
+            {
+                Id = "test-id",
+                Email = "test@emial.com",
+                FirstName = "John",
+                LastName = "Doe"
+            };
 
-        //    // Act
-        //    var result = await _userService.GetUserIdByEmailAsync("test@emial.com");
+            _userManagerMock.Setup(u => u.FindByEmailAsync(It.IsAny<string>())).ReturnsAsync(user);
 
-        //    // Assert
-        //    Assert.NotNull(result);
-        //    Assert.False(result.Succeeded);
-        //    Assert.NotEqual(result.Error, ResultError.None);
-        //}
+            // Act
+            var result = await _userService.GetUserByEmailAsync("test@emial.com");
 
-        //[Fact]
-        //public async Task ListUsersStocksAsyncTest()
-        //{
-        //    // Arrange 
-        //    var stockList = new List<Stock>()
-        //    {
-        //        new Stock() { Id = 1, Name = "TestStock1"},
-        //        new Stock() { Id = 2, Name = "TestStock2" }
-        //    };
-        //    _mapperMock.Setup(m => m.Map<ViewStockDtoForList>(It.IsAny<Stock>())).Returns<Stock>(s => new ViewStockDtoForList() { Name = s.Name });
-        //    _userRepositoryMock.Setup(u => u.ListUsersStocksAsync(It.IsAny<string>())).ReturnsAsync(stockList);
+            // Assert
+            Assert.NotNull(result);
+            Assert.True(result.Succeeded);
+            Assert.Equal(result.Error, ResultError.None);
+            Assert.Equal(result.Value.FirstName, user.FirstName);
+        }
 
-        //    // Act
-        //    var result = await _userService.ListUsersStocksAsync("user-id");
+        [Fact]
+        public async Task GetUserStockAsyncTest()
+        {
+            // Arrange 
+            var stock = new Stock() { Id = 1, Name = "TestStock1" };
+            _mapperMock.Setup(m => m.Map<ViewStockDto>(It.IsAny<Stock>())).Returns<Stock>(s => new ViewStockDto() { Name = s.Name });
+            _userRepositoryMock.Setup(u => u.GetUserStockAsync(It.IsAny<string>())).ReturnsAsync(stock);
 
-        //    // Assert
-        //    Assert.NotNull(result);
-        //    Assert.Equal(result[0].Name, stockList[0].Name);
-        //    Assert.Equal(result[1].Name, stockList[1].Name);
-        //}
+            // Act
+            var result = await _userService.GetUserStockAsync("user-id");
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(result.Value.Name, stock.Name);
+        }
     }
 }
