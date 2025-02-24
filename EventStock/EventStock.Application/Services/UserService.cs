@@ -44,7 +44,8 @@ namespace EventStock.Application.Services
             }
 
             var mappedUser = _mapper.Map<UserDto>(user);
-            mappedUser.Roles = [.. (await _userManager.GetRolesAsync(user))];
+            var userRoles = await _userManager.GetRolesAsync(user);
+            mappedUser.Roles = userRoles?.ToList() ?? new List<string>();
 
             return Result<UserDto>.Success(mappedUser);
         }
